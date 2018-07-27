@@ -1,0 +1,12 @@
+# Ensime stuff
+.ensime_cache
+.ensime
+ensime-langserver.log
+pc.stdout.log
+
+# Generic scala
+project/
+target/
+
+# Data
+cmudict-0.7b
