@@ -10,3 +10,9 @@ target/
 
 # Data
 cmudict-0.7b
+
+# IntelliJ stuff
+.idea/
+
+# Temporary files
+~$*
