@@ -5,15 +5,18 @@ import edu.cmu.sphinx.api._
 import scala.io.Source
 import java.io._
 import scala.collection.mutable.{ ArrayBuffer, HashMap, MultiMap, Set }
+import scala.collection.immutable.{Set => ImmSet}
 
 /**
- * This is the main class.
- *
- * It ingests the word dictionary and parses it into a format that can
- * later be searched through
+ * This class stores stores all known words broken up into their
+ * phonemes.
  */
-object Main extends App {
+object Rhymes {
   type WordMap = HashMap[String, Set[String]] with MultiMap[String, String]
+
+  val pronunciations: List[Word] = parse_cmu
+  val lookup: WordMap = list_to_multimap(pronunciations)
+  val rhyme_lookup = init_rhyme_map(pronunciations)
 
   /**
    * Open the CMU language dictionary and read it into a
@@ -88,18 +91,14 @@ object Main extends App {
   def get_phones_for_word(lookup: WordMap, word: String): Set[String] = lookup.get(word) getOrElse (Set.empty)
 
 
-  def rhymes(lookup: WordMap, rhyme_lookup: WordMap, word: String): Set[String] = {
+  def rhymes(word: String): ImmSet[String] = {
     get_phones_for_word(lookup, word).
       map(word => rhyming_part(word)).
       flatMap(word => rhyme_lookup.get(word) getOrElse Set.empty).
-      filter(_ != word)
+      filter(_ != word).
+      toSet
   }
 
-  val pronunciations: List[Word] = parse_cmu
-  val lookup: WordMap = list_to_multimap(pronunciations)
-  val rhyme_lookup = init_rhyme_map(pronunciations)
 
-  val word: String = "roma"
-  println(rhymes(lookup, rhyme_lookup, word))
 }
 
