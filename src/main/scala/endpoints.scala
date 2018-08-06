@@ -2,10 +2,16 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.marshallers.sprayjson._
 import akka.stream.ActorMaterializer
 import scala.io.StdIn
+import spray.json._
+import spray.json.DefaultJsonProtocol._
+
+import uk.ac.ucl.rsdg.pronouncing.Rhymes
 
 object WebServer {
+
   def main(args: Array[String]) {
 
     implicit val system = ActorSystem("my-system")
@@ -14,9 +20,10 @@ object WebServer {
     implicit val executionContext = system.dispatcher
 
     val route =
-      path("hello") {
+      path("words" / "rhymes-with" / Segment) { word =>
         get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
+          val results = Rhymes.rhymes(word)
+          complete(HttpEntity(ContentTypes.`application/json`, results.toJson.toString))
         }
       }
 
