@@ -18,8 +18,6 @@ object Rhymes {
   val lookup: WordMap = list_to_multimap(pronunciations)
   val rhyme_lookup = init_rhyme_map(pronunciations)
 
-  val word: String = "roma"
-
   /**
    * Open the CMU language dictionary and read it into a
    * Word array
