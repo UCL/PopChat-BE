@@ -5,7 +5,8 @@ ensime-langserver.log
 pc.stdout.log
 
 # Generic scala
-project/
+project/project/
+project/target/
 target/
 
 # Data
