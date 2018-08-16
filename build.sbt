@@ -60,10 +60,10 @@ libraryDependencies += "com.typesafe.akka" %% "akka-http-testkit" % "10.1.3"
 // sbt is a bit different, semantically, than vanilla Scala.
 
 // ================================
-// Download refenrece data files
+// Download reference data files
 lazy val downloadFromZip = taskKey[Unit]("Download the cmu dictionary file")
 
-import sys.process._
+import scala.sys.process._
 
 downloadFromZip := {
     val targetfile: String = "cmudict-0.7b"
