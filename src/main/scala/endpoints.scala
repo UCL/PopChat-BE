@@ -22,7 +22,7 @@ object WebServer {
     val route =
       path("words" / "rhymes-with" / Segment) { word =>
         get {
-          val results = Rhymes.rhymes(word.toLowerCase)
+          val results = Rhymes.rhymes(word)
           complete(HttpEntity(ContentTypes.`application/json`, results.toJson.toString))
         }
       }
