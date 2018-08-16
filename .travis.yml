@@ -1,8 +1,5 @@
 language: scala
 
-git:
-  depth: 99999
-
 scala:
   # - 2.9.3
   # - 2.10.6
@@ -10,3 +7,6 @@ scala:
    - 2.12.2
 
 jdk: oraclejdk8
+
+before_script:
+  rm project/plugins.sbt
