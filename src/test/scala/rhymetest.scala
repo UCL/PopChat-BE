@@ -4,7 +4,7 @@ import uk.ac.ucl.rsdg.pronouncing.Rhymes
 class RhymeTest extends FlatSpec with Matchers {
 
     "Rhymes" should "find more than 1 rhyme for roma" in {
-        assert(Rhymes.rhymes("roma").size > 1)
+        Rhymes.rhymes("roma").size should be > 1
     }
 
     it should "be case insensitive" in {
@@ -13,7 +13,7 @@ class RhymeTest extends FlatSpec with Matchers {
     }
 
     it should "not find rhymes for elephant" in {
-        Rhymes.rhymes("Elephant").size shouldBe 0
+        Rhymes.rhymes("Elephant") shouldBe empty
     }
 
 }
