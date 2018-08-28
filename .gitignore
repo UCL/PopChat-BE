@@ -6,7 +6,6 @@ pc.stdout.log
 
 # Generic scala
 project/project/
-project/target/
 target/
 
 # Data
