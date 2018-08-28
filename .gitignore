@@ -16,3 +16,6 @@ cmudict-0.7b
 
 # Temporary files
 ~$*
+*.swp
+*.swo
+.#*
