@@ -1,3 +1,5 @@
+package uk.ac.ucl.rsdg.api
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
@@ -12,20 +14,20 @@ import uk.ac.ucl.rsdg.pronouncing.Rhymes
 
 object WebServer {
 
+  val route =
+    path("words" / "rhymes-with" / Segment) { word =>
+      get {
+        val results = Rhymes.rhymes(word)
+        complete(HttpEntity(ContentTypes.`application/json`, results.toJson.toString))
+      }
+    }
+
   def main(args: Array[String]) {
 
     implicit val system = ActorSystem("my-system")
     implicit val materializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher
-
-    val route =
-      path("words" / "rhymes-with" / Segment) { word =>
-        get {
-          val results = Rhymes.rhymes(word.toLowerCase)
-          complete(HttpEntity(ContentTypes.`application/json`, results.toJson.toString))
-        }
-      }
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
 

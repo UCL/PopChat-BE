@@ -30,6 +30,11 @@ libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.1.3"
 libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.14"
 libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.3"
 
+// We need some extra libraries for easy akka testing
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+libraryDependencies += "com.typesafe.akka" %% "akka-http-testkit" % "10.1.3"
+
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
 // we're adding the cats dependency to the set of dependencies that sbt will go
 // and fetch when it starts up.
@@ -55,10 +60,10 @@ libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.3"
 // sbt is a bit different, semantically, than vanilla Scala.
 
 // ================================
-// Download refenrece data files
+// Download reference data files
 lazy val downloadFromZip = taskKey[Unit]("Download the cmu dictionary file")
 
-import sys.process._
+import scala.sys.process._
 
 downloadFromZip := {
     val targetfile: String = "cmudict-0.7b"

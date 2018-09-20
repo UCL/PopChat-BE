@@ -91,11 +91,12 @@ object Rhymes {
   def get_phones_for_word(lookup: WordMap, word: String): Set[String] = lookup.get(word) getOrElse (Set.empty)
 
 
-  def rhymes(word: String): ImmSet[String] = {
-    get_phones_for_word(lookup, word).
+  def rhymes(input: String): ImmSet[String] = {
+    val lcase_word = input.toLowerCase
+    get_phones_for_word(lookup, lcase_word).
       map(word => rhyming_part(word)).
       flatMap(word => rhyme_lookup.get(word) getOrElse Set.empty).
-      filter(_ != word).
+      filter(_ != lcase_word).
       toSet
   }
 

@@ -5,7 +5,7 @@ ensime-langserver.log
 pc.stdout.log
 
 # Generic scala
-project/
+project/project/
 target/
 
 # Data
@@ -16,3 +16,6 @@ cmudict-0.7b
 
 # Temporary files
 ~$*
+*.swp
+*.swo
+.#*
