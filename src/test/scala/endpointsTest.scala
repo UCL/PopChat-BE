@@ -19,7 +19,7 @@ class EndpointsTest extends WordSpec with Matchers with ScalatestRouteTest {
 
     "The song service" should {
         "return a result for song with id 1" in {
-            Get("/song/1") ~> WebServer.route ~> check {
+            Get("/songs/song/1") ~> WebServer.route ~> check {
                 status shouldEqual StatusCodes.OK
                 //responseAs[String] should include ("michelle")
             }
