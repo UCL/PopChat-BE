@@ -1,39 +1,27 @@
-// The simplest possible sbt build file is just one line:
-
 scalaVersion := "2.12.6"
-// That is, to create a valid sbt build, all you've got to do is define the
-// version of Scala you'd like your project to use.
 
-// ============================================================================
-
-// Lines like the above defining `scalaVersion` are called "settings" Settings
-// are key/value pairs. In the case of `scalaVersion`, the key is "scalaVersion"
-// and the value is "2.12.6"
-
-// It's possible to define many kinds of settings, such as:
-
-name := "pronouncing"
+name := "popchat"
 organization := "uk.ac.ucl.rits"
 version := "0.1"
 
-// Note, it's not required for you to define these three settings. These are
-// mostly only necessary if you intend to publish your library's binaries on a
-// place like Sonatype or Bintray.
+libraryDependencies ++=Seq(
+    "org.typelevel" %% "cats-core" % "1.1.0",
+    "de.sciss" % "sphinx4-core" % "1.0.0",
+    "de.sciss" % "sphinx4-core" % "1.0.0",
+    "com.typesafe.akka" %% "akka-http" % "10.1.3",
+    "com.typesafe.akka" %% "akka-stream" % "2.5.14",
+    "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.3",
+    // Libraries for akka testing
+    "org.scalactic" %% "scalactic" % "3.0.5",
+    "org.scalatest" %% "scalatest" % "3.0.5" % "test",
+    "com.typesafe.akka" %% "akka-http-testkit" % "10.1.3",
+    // Use Quill for DB interaction with PostgreSQL
+    "org.postgresql" % "postgresql" % "9.4.1208",
+    "io.getquill" %% "quill-jdbc" % "2.5.4"
+)
 
-
-// Want to use a published library in your project?
-// You can define other libraries as dependencies in your build like this:
-libraryDependencies += "org.typelevel" %% "cats-core" % "1.1.0"
-libraryDependencies += "de.sciss" % "sphinx4-core" % "1.0.0"
-libraryDependencies += "de.sciss" % "sphinx4-data" % "1.0.0"
-libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.1.3"
-libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.14"
-libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.3"
-
-// We need some extra libraries for easy akka testing
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
-libraryDependencies += "com.typesafe.akka" %% "akka-http-testkit" % "10.1.3"
+// Context definition to connect Quill with Postgres
+//lazy val ctx = new PostgresJdbcContext(PopChat, "ctx")
 
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
 // we're adding the cats dependency to the set of dependencies that sbt will go
