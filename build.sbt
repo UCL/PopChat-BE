@@ -4,7 +4,7 @@ name := "popchat"
 organization := "uk.ac.ucl.rits"
 version := "0.1"
 
-libraryDependencies ++=Seq(
+libraryDependencies ++= Seq(
     "org.typelevel" %% "cats-core" % "1.1.0",
     "de.sciss" % "sphinx4-core" % "1.0.0",
     "de.sciss" % "sphinx4-core" % "1.0.0",
