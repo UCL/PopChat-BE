@@ -1,0 +1,7 @@
+db.default {
+  host = "localhost"
+  port = 5432
+  user = "popchat"
+  password = ""
+  database = "popchat"
+}
