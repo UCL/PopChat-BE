@@ -11,6 +11,7 @@ import spray.json._
 import spray.json.DefaultJsonProtocol._
 
 import uk.ac.ucl.rsdg.pronouncing.Rhymes
+import uk.ac.ucl.rsdg.pronouncing.Songs
 
 object WebServer {
 
@@ -21,10 +22,10 @@ object WebServer {
         complete(HttpEntity(ContentTypes.`application/json`, results.toJson.toString))
       }
     } ~
-    path("song"/ Segment) { song_id =>
+    path("songs"/ "song" / Segment) { song_id =>
       get {
-        val results = Song.get(song_id)
-        complete(HttpEntity(ContentTypes.`application/json`, results.toJson.toString))
+        val song = Songs.getSong(song_id)
+        complete(HttpEntity(ContentTypes.`application/json`, song.toString))
       }
     }
 
