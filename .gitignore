@@ -14,6 +14,9 @@ cmudict-0.7b
 # IntelliJ stuff
 .idea/
 
+# Database connection details
+conf/application.conf
+
 # Temporary files
 ~$*
 *.swp
