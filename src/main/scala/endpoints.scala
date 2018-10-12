@@ -20,6 +20,12 @@ object WebServer {
         val results = Rhymes.rhymes(word)
         complete(HttpEntity(ContentTypes.`application/json`, results.toJson.toString))
       }
+    } ~
+    path("song"/ Segment) { song_id =>
+      get {
+        val results = Song.get(song_id)
+        complete(HttpEntity(ContentTypes.`application/json`, results.toJson.toString))
+      }
     }
 
   def main(args: Array[String]) {
