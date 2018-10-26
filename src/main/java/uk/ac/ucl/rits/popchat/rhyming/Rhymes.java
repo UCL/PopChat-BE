@@ -33,6 +33,10 @@ public class Rhymes {
 	/** Instance of Rhymes used for the singleton pattern */
 	private static Rhymes me = null;
 
+	/**
+	 * Create a new Rhymes instance. Note that this reads the relevant files and
+	 * precomputes all the necessary relationships when called
+	 */
 	private Rhymes() {
 		this.pronunciations = parseCmu();
 		this.lookup = listToMultimap(pronunciations);
@@ -43,7 +47,7 @@ public class Rhymes {
 	 * Open the CMU language dictionary and read every word to pronunciation pair
 	 */
 	private List<Word> parseCmu() {
-		//Open the file
+		// Open the file
 		try (final InputStream in = Rhymes.class.getResourceAsStream(this.dictfile);
 				final Reader r = new InputStreamReader(in, StandardCharsets.ISO_8859_1);
 				final BufferedReader br = new BufferedReader(r);
@@ -52,11 +56,11 @@ public class Rhymes {
 			return lines
 					// Drop comment lines
 					.filter((line) -> !line.startsWith(";"))
-					// Split by the word pronunciation separator "  " (" " separates sounds)
+					// Split by the word pronunciation separator " " (" " separates sounds)
 					.map(line -> line.trim().split("  "))
 					// Each line must have exactly 2 parts
 					.map((data) -> {
-						if(data.length != 2) {
+						if (data.length != 2) {
 							throw new IllegalStateException("Each row must contain exactly 2 elements");
 						}
 						return data;
@@ -70,6 +74,12 @@ public class Rhymes {
 
 	}
 
+	/**
+	 * Take a list of words, and create a map from rhyming endings to all possible words
+	 * 
+	 * @param list List of words to map
+	 * @return A map from rhyming parts to rhyming words
+	 */
 	private Map<String, Set<String>> initRhymeMap(List<Word> list) {
 		Map<String, Set<String>> wordMap = new HashMap<>();
 		list.forEach(word -> {
@@ -89,7 +99,9 @@ public class Rhymes {
 
 	/**
 	 * For each word, map it to a set of all of its pronunciations
-	 * @param list A List of words and pronunciations where each word may appear more than once
+	 * 
+	 * @param list A List of words and pronunciations where each word may appear
+	 *             more than once
 	 * @return A Map keyed on words, going to the set of possible pronunciations
 	 */
 	private Map<String, Set<String>> listToMultimap(List<Word> list) {
@@ -107,6 +119,7 @@ public class Rhymes {
 
 	/**
 	 * Get the ending part of the word, ie the part involved in the rhyme
+	 * 
 	 * @param phones All of the sounds making up the word. Each separated by a " "
 	 * @return The sounds making up only the rhyming bit (separated by " ")
 	 */
@@ -127,7 +140,7 @@ public class Rhymes {
 		StringBuilder builder = new StringBuilder();
 		for (int i = rhymingStart; i < phonesList.length; i++) {
 			builder.append(phonesList[i]);
-			if(i != phonesList.length - 1) {
+			if (i != phonesList.length - 1) {
 				builder.append(" ");
 			}
 		}
@@ -136,8 +149,9 @@ public class Rhymes {
 
 	/**
 	 * Get the possible pronunciations of a word
+	 * 
 	 * @param lookup Map of all pronunciations of all known words
-	 * @param word Word to look up
+	 * @param word   Word to look up
 	 * @return A set of all possible pronunciations
 	 */
 	private Set<String> getPhonesForWord(Map<String, Set<String>> lookup, String word) {
@@ -155,16 +169,14 @@ public class Rhymes {
 	 * @return All the known words that rhyme with it.
 	 */
 	public Set<String> rhymes(String word) {
-		return getPhonesForWord(lookup, word.toLowerCase())
-				.stream()
-				.map(w -> rhymingPart(w))
-				.flatMap(w -> this.rhymeLookup.get(w).stream())
-				.filter(w -> !w.equals(word))
+		return getPhonesForWord(lookup, word.toLowerCase()).stream().map(w -> rhymingPart(w))
+				.flatMap(w -> this.rhymeLookup.get(w).stream()).filter(w -> !w.equals(word))
 				.collect(Collectors.toSet());
 	}
 
 	/**
 	 * Get an instance of Rhymes that you can use
+	 * 
 	 * @return An instance of Rhymes
 	 */
 	public static Rhymes getRhymes() {
