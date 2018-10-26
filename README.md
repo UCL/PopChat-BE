@@ -28,6 +28,7 @@ This is a server to keep track of songs.
     ```bash
     mvn spring-boot:run
     ```
+    * You can check the server is live by opening a browser on `http://localhost:8080/words/rhymes-with/bee`.
 
 1. Or run the tests
 
