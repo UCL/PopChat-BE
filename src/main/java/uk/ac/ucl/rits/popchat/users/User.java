@@ -5,30 +5,29 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * A User represents a single individuals login credentials. 
+ * 
+ * @author RSDG
+ *
+ */
 @Entity
 public class User {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	
+
 	private String username;
-	
+
 	private String password;
 	private String salt;
 	private String algorithm;
 	private int iterations;
 
 	private boolean enabled;
-	
-	public User() {}
-	
-	public String applyHash() {
-		return null;
-	}
-	
-	public String generateSalt() {
-		return null;
+
+	public User() {
 	}
 
 	public long getId() {
