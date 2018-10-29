@@ -1,21 +1,15 @@
-# Ensime stuff
-.ensime_cache
-.ensime
-ensime-langserver.log
-pc.stdout.log
-
-# Generic scala
-project/project/
-target/
-
 # Data
-cmudict-0.7b
+src/main/resources/cmudict-*
 
-# IntelliJ stuff
-.idea/
+# Eclipse stuff
+.classpath/
+.target/
+.settings/
+.classpath
+.project
 
-# Temporary files
-~$*
-*.swp
-*.swo
-.#*
+# Temp files
+*~
+
+
+/target/
