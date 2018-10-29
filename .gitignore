@@ -10,6 +10,6 @@ src/main/resources/cmudict-*
 
 # Temp files
 *~
-
+.vscode/
 
 /target/
