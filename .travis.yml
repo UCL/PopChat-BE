@@ -1,0 +1,15 @@
+language: java
+
+jdk:
+  - oraclejdk8
+  - openjdk8
+  - openjdk11
+  - oraclejdk11
+
+
+before_install:
+    - echo ${TRAVIS_JDK_VERSION}
+
+script:
+    - mvn test
+
