@@ -8,7 +8,10 @@ jdk:
 
 
 before_install:
-    - echo ${TRAVIS_JDK_VERSION}
+    - echo `echo ${TRAVIS_JDK_VERSION} | grep -o "[0-9]\+"`
+
+install:
+    - mvn install -Djava.version=`echo ${TRAVIS_JDK_VERSION} | grep -o "[0-9]\+"` -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 script:
     - mvn -Dspring.profiles.active=test test -Djava.version=`echo ${TRAVIS_JDK_VERSION} | grep -o "[0-9]\+"`
