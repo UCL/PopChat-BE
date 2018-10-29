@@ -11,5 +11,5 @@ before_install:
     - echo ${TRAVIS_JDK_VERSION}
 
 script:
-    - mvn test
+    - mvn -Dspring.profiles.active=test test -Djava.version=`echo ${TRAVIS_JDK_VERSION} | grep -o "[0-9]\+"`
 
