@@ -37,7 +37,7 @@ public class UserSecurity {
 	@Column(length = 512, nullable = false)
 	private String password;
 
-	@Column(length = 48, nullable = false)
+	@Column(length = 32, nullable = false)
 	private byte[] salt;
 
 	@Column(length = 50, nullable = false)
