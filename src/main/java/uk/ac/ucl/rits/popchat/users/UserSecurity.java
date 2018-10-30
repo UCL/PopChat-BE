@@ -1,33 +1,47 @@
 package uk.ac.ucl.rits.popchat.users;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /**
- * A User represents a single individuals login credentials. 
+ * A User represents a single individuals login credentials.
  * 
  * @author RSDG
  *
  */
 @Entity
-public class User {
+@Table(indexes = { @Index(columnList = ("username"), name = "username_index") })
+public class UserSecurity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
+	@Column(length = 50, unique = true, nullable = false)
 	private String username;
 
+	@Column(length = 512, nullable = false)
 	private String password;
-	private String salt;
+
+	@Column(length = 48, nullable = false)
+	private byte[] salt;
+
+	@Column(length = 50, nullable = false)
 	private String algorithm;
+
+	@NotNull
 	private int iterations;
 
-	private boolean enabled;
+	@NotNull
+	private int hashLength;
 
-	public User() {
+	public UserSecurity() {
 	}
 
 	public long getId() {
@@ -54,11 +68,11 @@ public class User {
 		this.password = password;
 	}
 
-	public String getSalt() {
+	public byte[] getSalt() {
 		return salt;
 	}
 
-	public void setSalt(String salt) {
+	public void setSalt(byte[] salt) {
 		this.salt = salt;
 	}
 
@@ -78,12 +92,19 @@ public class User {
 		this.iterations = iterations;
 	}
 
-	public boolean isEnabled() {
-		return enabled;
+	public int getHashLength() {
+		return hashLength;
 	}
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public void setHashLength(int hashLength) {
+		this.hashLength = hashLength;
 	}
 
+	public boolean validatePassword(String password) {
+		return false;
+	}
+	
+	public static UserSecurity generateNewUser(String username, String password) {
+		return null;
+	}
 }
