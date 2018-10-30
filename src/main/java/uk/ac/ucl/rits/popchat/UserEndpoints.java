@@ -42,8 +42,17 @@ public class UserEndpoints {
 	}
 
 	@PostMapping("/login")
-	public void login(String username, String password) {
-		log.info("Login attempt!");
+	public boolean login(@RequestBody NewUser user) {
+		UserSecurity existingUser = userRepo.findByUsername(user.getUsername());
+		if (existingUser == null) {
+			return false;
+		}
+		try {
+			return existingUser.validatePassword(user.getPassword());
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			log.error("Failed to check password", e);
+			return false;
+		}
 	}
 
 	@PostMapping("/logout")
