@@ -1,5 +1,6 @@
 package uk.ac.ucl.rits.popchat.users;
 
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
@@ -121,7 +122,7 @@ public class UserSecurity {
 	public boolean validatePassword(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		Hasher hasher = HashGenerator.getHasher(this.algorithm);
 		String hash = hasher.applyHash(password.toCharArray(), this.salt, this.iterations, this.hashLength);
-		return hash.equals(this.password);
+		return MessageDigest.isEqual(this.password.getBytes(), hash.getBytes());
 	}
 
 	public static UserSecurity generateNewUser(String username, String password, String hashAlgorithm,
