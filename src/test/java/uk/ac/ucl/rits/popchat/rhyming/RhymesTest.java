@@ -1,6 +1,5 @@
 package uk.ac.ucl.rits.popchat.rhyming;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -45,7 +44,8 @@ public class RhymesTest {
 	}
 
 	/**
-	 *  Make sure that the rhyming end point is hooked up
+	 * Make sure that the rhyming end point is hooked up
+	 * 
 	 * @throws Exception Something bad happened
 	 */
 	@Test

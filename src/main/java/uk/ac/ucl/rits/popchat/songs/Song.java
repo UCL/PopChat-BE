@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Song {
@@ -12,12 +13,17 @@ public class Song {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+	
+	@NotNull
 	private String title;
+	@NotNull
 	private String artist;
+	@NotNull
 	private int year;
+	@NotNull
 	private String video;
 
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT", nullable=false)
 	private String lyrics;
 
 	public Song() {
