@@ -24,7 +24,7 @@ public class HashGenerator {
 			return new Pbkdf2Hasher();
 		default:
 			throw new NoSuchAlgorithmException(
-					String.format("The algorithm %s is not available for salt generation", strategy));
+					String.format("The algorithm %s is not available for hash generation", strategy));
 		}
 	}
 
