@@ -26,7 +26,7 @@ import uk.ac.ucl.rits.popchat.users.salt.SaltGenerator;
  */
 @Entity
 @Table(indexes = { @Index(columnList = ("username"), name = "username_index") })
-public class UserSecurity {
+public class PopUser {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,10 +50,10 @@ public class UserSecurity {
 	@NotNull
 	private int hashLength;
 
-	public UserSecurity() {
+	public PopUser() {
 	}
 
-	public UserSecurity(String username, String password, byte[] salt, String hashAlgorithm, int iterations,
+	public PopUser(String username, String password, byte[] salt, String hashAlgorithm, int iterations,
 			int hashLength) {
 		this.username = username;
 		this.password = password;
@@ -125,13 +125,13 @@ public class UserSecurity {
 		return MessageDigest.isEqual(this.password.getBytes(), hash.getBytes());
 	}
 
-	public static UserSecurity generateNewUser(String username, String password, String hashAlgorithm,
+	public static PopUser generateNewUser(String username, String password, String hashAlgorithm,
 			String saltAlgorithm, int iterations, int saltLength, int hashLength)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		SaltGenerator saltGen = RandomSalt.getSaltGenerator(saltAlgorithm);
 		byte[] salt = saltGen.generateSalt(saltLength);
 		Hasher hasher = HashGenerator.getHasher(hashAlgorithm);
 		String hash = hasher.applyHash(password.toCharArray(), salt, iterations, hashLength);
-		return new UserSecurity(username, hash, salt, hashAlgorithm, iterations, hashLength);
+		return new PopUser(username, hash, salt, hashAlgorithm, iterations, hashLength);
 	}
 }

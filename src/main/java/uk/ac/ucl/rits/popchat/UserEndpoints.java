@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ucl.rits.popchat.messages.BatchUserSpecification;
 import uk.ac.ucl.rits.popchat.messages.NewUser;
 import uk.ac.ucl.rits.popchat.users.UserRepository;
-import uk.ac.ucl.rits.popchat.users.UserSecurity;
+import uk.ac.ucl.rits.popchat.users.PopUser;
 
 @RestController
 @RequestMapping("/user")
@@ -46,7 +46,7 @@ public class UserEndpoints {
 
 	@PostMapping("/login")
 	public boolean login(@RequestBody NewUser user) {
-		UserSecurity existingUser = userRepo.findByUsername(user.getUsername());
+		PopUser existingUser = userRepo.findByUsername(user.getUsername());
 		if (existingUser == null) {
 			return false;
 		}
@@ -65,12 +65,12 @@ public class UserEndpoints {
 
 	@PostMapping("/signup")
 	public void signup(@RequestBody NewUser user) {
-		UserSecurity existingUser = userRepo.findByUsername(user.getUsername());
+		PopUser existingUser = userRepo.findByUsername(user.getUsername());
 		if (existingUser != null) {
 			throw new RuntimeException("Sorry, this username is already taken");
 		}
 		try {
-			UserSecurity newUser = UserSecurity.generateNewUser(user.getUsername(), user.getPassword(), hashAlgorithm,
+			PopUser newUser = PopUser.generateNewUser(user.getUsername(), user.getPassword(), hashAlgorithm,
 					this.saltAlgorithm, iterations, saltLength, hashLength);
 			userRepo.save(newUser);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
