@@ -14,11 +14,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import me.atrox.haikunator.Haikunator;
 import uk.ac.ucl.rits.popchat.songs.Song;
 import uk.ac.ucl.rits.popchat.songs.SongRepository;
+import uk.ac.ucl.rits.popchat.users.PopUser;
+import uk.ac.ucl.rits.popchat.users.UserRepository;
 
 /**
  * The Application is the entry point for the Application. It sets up the Spring
@@ -74,6 +78,48 @@ public class Application {
 				}
 			}
 
+		};
+	}
+
+	@Bean
+	public CommandLineRunner ensureValidSizes(@Value("${salt.length}") int saltLength,
+			@Value("${hash.length}") int hashLength) {
+		return (args) -> {
+			if (saltLength + hashLength > 600) {
+				throw new IllegalArgumentException(
+						String.format("Cannot start application because salt.length + hash.length > 600: %d + %d = %d",
+								saltLength, hashLength, saltLength + hashLength));
+			}
+		};
+	}
+
+	@Bean
+	public CommandLineRunner ensureAdmin(UserRepository userRepo, PasswordEncoder passwordEncoder,
+			@Value("${default.admin.username}") final String username) {
+		return (args) -> {
+
+			String uname = username;
+			PopUser existingUser = userRepo.findByUsername(uname);
+			if (existingUser != null && existingUser.getIsAdmin()) {
+				log.info("Admin user already present");
+			} else {
+				Haikunator haik = new Haikunator();
+				haik.setTokenLength(1);
+				while (existingUser != null) {
+					uname = haik.haikunate();
+					existingUser = userRepo.findByUsername(uname);
+				}
+				try {
+					String password = haik.haikunate();
+					PopUser newUser = new PopUser(uname, passwordEncoder.encode(password), true);
+					userRepo.save(newUser);
+					log.info(String.format("Created admin with username %s and password %s", uname, password));
+				} catch (IllegalStateException e) {
+					log.error("Failed to create new user", e);
+					throw new RuntimeException(
+							"Sorry. New users cannot be created at this time. Please contact support.");
+				}
+			}
 		};
 	}
 

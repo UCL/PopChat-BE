@@ -25,7 +25,7 @@ public class PopUser {
 	@Column(length = 50, unique = true, nullable = false)
 	private String username;
 
-	@Column(length = 512, nullable = false)
+	@Column(length = 640, nullable = false)
 	private String password;
 
 	private boolean isAdmin;

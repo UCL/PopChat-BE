@@ -48,9 +48,11 @@ The following options are used to configure the application:
  - `initialSongDataDirectory`: The directory to look for song jsons to preload the database. `/` is `src/main/resources`
  - `salt.algorithm`: The algorithm to use the generate random salts. Supported options are: `SHA1PRNG`
  - `hash.algorithm`: The hashing algorithm to use. Supported options are: `PBFDF2`
- - `salt.length`: Length of the salt. Must be 32
- - `hash.length`: Length of the hash. Must be 512
+ - `salt.length`: Length of the salt
+ - `hash.length`: Length of the hash
  - `hash.iterations`: Number of hashing iterations.
+ 
+ Note that the length of salt + length of hash must be <= 600.
 
 ### Song JSON format
 

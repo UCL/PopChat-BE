@@ -40,6 +40,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Value("${salt.length}")
 	private int defaultSaltLength;
 
+	@Value("${hash.length}")
+	private int defaultHashLength;
+
+	@Value("${hash.iterations}")
+	private int defaultHashIterations;
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(this.authProvider());
@@ -47,8 +53,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().anyRequest().fullyAuthenticated();
-		http.httpBasic();
+		http.authorizeRequests().antMatchers("/user/signup").permitAll().anyRequest().hasRole("BASIC").and()
+				.httpBasic().and().csrf().disable();
 	}
 
 	@Bean
@@ -60,10 +66,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
-	PasswordEncoder passwordEncoder() {
+	public PasswordEncoder passwordEncoder() {
 		Map<String, PasswordEncoder> encoders = new HashMap<>();
 		try {
-			encoders.put(HashUtil.PBKDF2, new Pbkdf2PasswordEncoder(this.defaultSaltAlgorithm, this.defaultSaltLength));
+			encoders.put(HashUtil.PBKDF2, new Pbkdf2PasswordEncoder(this.defaultSaltAlgorithm, this.defaultSaltLength,
+					this.defaultHashLength, this.defaultHashIterations));
 		} catch (NoSuchAlgorithmException e) {
 			SecurityConfiguration.log.error("Failed create password encoder", e);
 			throw new IllegalStateException("Cannnot create password encoder");

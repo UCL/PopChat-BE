@@ -1,6 +1,5 @@
 package uk.ac.ucl.rits.popchat.security.hash;
 
-import java.nio.CharBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -8,7 +7,6 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -26,23 +24,22 @@ public class Pbkdf2PasswordEncoder implements PasswordEncoder {
 	private final SaltGenerator saltGen;
 
 	private final int saltLength;
+	private final int hashLength;
+	private final int iterations;
 
-	@Value("${hash.length}")
-	private int hashLength;
-
-	@Value("${hash.iterations}")
-	private int iterations;
-
-	public Pbkdf2PasswordEncoder(String saltAlgorithm, int saltLength) throws NoSuchAlgorithmException {
+	public Pbkdf2PasswordEncoder(String saltAlgorithm, int saltLength, int hashLength, int hashIterations)
+			throws NoSuchAlgorithmException {
 		this.saltGen = RandomSalt.getSaltGenerator(saltAlgorithm);
 		this.saltLength = saltLength;
+		this.hashLength = hashLength;
+		this.iterations = hashIterations;
 	}
 
 	@Override
 	public String encode(CharSequence rawPassword) {
 		try {
 			byte[] salt = this.saltGen.generateSalt(this.saltLength);
-			char[] password = CharBuffer.wrap(rawPassword).array();
+			char[] password = rawPassword.toString().toCharArray();
 			return this.hashPassword(password, salt, this.iterations, this.hashLength);
 		} catch (NoSuchAlgorithmException e) {
 			throw new IllegalStateException("The salt specification is invalid. Please contact support");
@@ -52,8 +49,8 @@ public class Pbkdf2PasswordEncoder implements PasswordEncoder {
 	@Override
 	public boolean matches(CharSequence rawPassword, String encodedPassword) {
 		String[] parts = encodedPassword.split(":");
-		char[] passChars = CharBuffer.wrap(rawPassword).array();
-		byte[] salt = parts[1].getBytes();
+		char[] passChars = rawPassword.toString().toCharArray();
+		byte[] salt = Hex.decode(parts[1]);
 		int iterations = Integer.parseInt(parts[2]);
 		int hashLength = Integer.parseInt(parts[3]);
 		String trialPassword = this.hashPassword(passChars, salt, iterations, hashLength);
@@ -68,7 +65,7 @@ public class Pbkdf2PasswordEncoder implements PasswordEncoder {
 			byte[] hash = skf.generateSecret(spec).getEncoded();
 			char[] hashChar = Hex.encode(hash);
 			char[] saltChar = Hex.encode(salt);
-			return String.format("%s:%s:%d:%d", hashChar, saltChar, iterations, hashLength);
+			return String.format("%s:%s:%d:%d", String.valueOf(hashChar), String.valueOf(saltChar), iterations, hashLength);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new IllegalStateException("The password specification is invalid. Please contact support");
 		}
