@@ -14,6 +14,17 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+
+import springfox.documentation.swagger.web.DocExpansion;
+import springfox.documentation.swagger.web.ModelRendering;
+import springfox.documentation.swagger.web.OperationsSorter;
+import springfox.documentation.swagger.web.SecurityConfiguration;
+import springfox.documentation.swagger.web.SecurityConfigurationBuilder;
+import springfox.documentation.swagger.web.TagsSorter;
+import springfox.documentation.swagger.web.UiConfiguration;
+import springfox.documentation.swagger.web.UiConfigurationBuilder;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,11 +34,16 @@ import uk.ac.ucl.rits.popchat.songs.SongRepository;
 /**
  * The Application is the entry point for the Application. It sets up the Spring
  * environment, as well as pre-loads songs into the database.
- * 
+ *
  * @author RSDG
  *
  */
 @SpringBootApplication
+@EnableSwagger2
+@ComponentScan(basePackageClasses = {
+    UserEndpoints.class,
+		WordEndpoints.class
+})
 public class Application {
 
 	private final static Logger log = LoggerFactory.getLogger(Application.class);
@@ -39,7 +55,7 @@ public class Application {
 	/**
 	 * This initialises the repository with songs based on those provided in dbInit.
 	 * Songs are not double added to database based on the URL for the video.
-	 * 
+	 *
 	 * @param repository   The SongRepository to add words too
 	 * @param initDataRoot The directory to look for JSON files describing songs in
 	 * @return CommandLineRunner to initialise the database
