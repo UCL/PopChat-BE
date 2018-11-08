@@ -39,11 +39,6 @@ import uk.ac.ucl.rits.popchat.songs.SongRepository;
  *
  */
 @SpringBootApplication
-@EnableSwagger2
-@ComponentScan(basePackageClasses = {
-    UserEndpoints.class,
-		WordEndpoints.class
-})
 public class Application {
 
 	private final static Logger log = LoggerFactory.getLogger(Application.class);
