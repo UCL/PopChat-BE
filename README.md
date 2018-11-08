@@ -5,9 +5,9 @@ This is a server to keep track of songs.
 
 ## Dependencies
 
+* Java 1.11, although the project can be built for other Java versions
 * Maven 3
 * Postgresql 9 or higher
-* Java 1.11, although the project can be built for other Java versions
 
 
 ## Instructions
@@ -69,5 +69,5 @@ Example Song JSON file
 ### Endpoints Documentation
 
 Documentation about the endpoints is automatically generated with Swagger.
-It can be accessed in the `/swagger-ui.html`, e.g. http://localhost:8080/swagger-ui.html.
+It can be accessed at `/swagger-ui.html`, e.g. http://localhost:8080/swagger-ui.html.
 The raw Swagger config data can be accessed at `/v2/api-docs`.
