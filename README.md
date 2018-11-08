@@ -65,3 +65,9 @@ Example Song JSON file
  "lyrics": "[00:20.500]Sing song lyrics in LRC format"
 }
 ```
+
+### Endpoints Documentation
+
+Documentation about the endpoints is automatically generated with Swagger.
+It can be accessed in the `/swagger-ui.html`, e.g. http://localhost:8080/swagger-ui.html.
+The raw Swagger config data can be accessed at `/v2/api-docs`.
