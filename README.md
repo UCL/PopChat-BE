@@ -5,9 +5,9 @@ This is a server to keep track of songs.
 
 ## Dependencies
 
-* Java 1.11
 * Maven 3
 * Postgresql 9 or higher
+* Java 1.11, although the project can be built for other Java versions
 
 
 ## Instructions
@@ -26,7 +26,7 @@ This is a server to keep track of songs.
 1. Run the code
 
     ```bash
-    mvn spring-boot:run
+    mvn spring-boot:run [-Djava.version=<Your Java Version>]
     ```
     * You can check the server is live by opening a browser on `http://localhost:8080/words/rhymes-with/bee`.
 
