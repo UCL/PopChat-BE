@@ -1,0 +1,378 @@
+swagger: '2.0'
+info:
+  description: PopChat API
+  version: '1.0.0'
+  title: PopChat API
+  termsOfService: 'urn:tos'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+# host: 'localhost:8080'
+# basePath: /
+tags:
+  - name: user-endpoints
+    description: User Endpoints
+  - name: word-endpoints
+    description: Word Endpoints
+  - name: quiz-endpoints
+    description: Quiz Endpoints
+  - name: song-endpoints
+    description: Song Endpoints
+paths:
+  /user/batch-signup:
+    post:
+      tags:
+        - user-endpoints
+      summary: batchSignup
+      operationId: batchSignupUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: users
+          description: users
+          required: true
+          schema:
+            $ref: '#/definitions/BatchUserSpecification'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/NewUser'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /user/login:
+    post:
+      tags:
+        - user-endpoints
+      summary: login
+      operationId: loginUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: user
+          description: user
+          required: true
+          schema:
+            $ref: '#/definitions/NewUser'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: boolean
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /user/logout:
+    post:
+      tags:
+        - user-endpoints
+      summary: logout
+      operationId: logoutUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /user/signup:
+    post:
+      tags:
+        - user-endpoints
+      summary: signup
+      operationId: signupUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: user
+          description: user
+          required: true
+          schema:
+            $ref: '#/definitions/NewUser'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/words/rhymes-with/{word}':
+    get:
+      tags:
+        - word-endpoints
+      summary: rhymesWith
+      operationId: rhymesWithUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: word
+          in: path
+          description: word
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /songs:
+    get:
+      tags:
+        - song-endpoints
+      summary: getSongs
+      operationId: getSongs
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Song'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /quiz:
+    post:
+      tags:
+        - quiz-endpoints
+      summary: getQuiz
+      operationId: getQuiz
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: song
+          description: song
+          required: true
+          schema:
+            $ref: '#/definitions/Song'
+      responses:
+        '200':
+          description: quiz response
+          schema:
+            $ref: '#/definitions/Quiz'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/quiz/result':
+    put:
+      tags:
+        - quiz-endpoints
+      summary: setResult
+      operationId: setResult
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: quiz
+          description: quiz
+          required: true
+          schema:
+            $ref: '#/definitions/Result'
+      responses:
+        '200':
+          description: quiz response
+          schema:
+            $ref: '#/definitions/Quiz'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+definitions:
+  Song:
+    required:
+      - id
+      - title
+      - youtube_id
+      - authors
+    properties:
+      id:
+        type: integer
+        format: int32
+      title:
+        type: string
+      youtube_id:
+        type: string
+      authors:
+        type: array
+        items:
+          type: string
+  Choice:
+    required:
+      - text
+      - correct
+    properties:
+      text:
+        type: string
+      correct:
+        type: boolean
+  Question:
+    required:
+      - id
+      - text
+      - choices
+      - start_time
+      - type
+    properties:
+      id:
+        type: integer
+        format: int32
+      text:
+        type: string
+      type:
+        type: string
+      start_time:
+        type: string
+        format: date-time
+      choices:
+        type: array
+        items:
+          $ref: '#/definitions/Choice'
+  Quiz:
+    required:
+      - id
+      - song
+      - questions
+      - start_time
+      - stop_time
+    properties:
+      id:
+        type: integer
+        format: int32
+      song:
+        $ref: '#/definitions/Song'
+      questions:
+        type: array
+        items:
+          $ref: '#/definitions/Question'
+      start_time:
+        type: string
+        format: date-time
+      stop_time:
+        type: string
+        format: date-time
+  Score:
+    required:
+      - id
+      - question_id
+      - answers
+      - ellapsed time
+      - value
+    properties:
+      id:
+        type: integer
+        format: int32
+      question_id:
+        type: integer
+        format: int32  
+      answers:
+        type: array
+        items:
+          $ref: '#/definitions/Choice'
+      ellapsed_time:
+        type: number
+      value:
+        type: number
+  Result:
+    required:
+      - id
+      - scores
+    properties:
+      id:
+        type: integer
+        format: int32
+      scores:
+        type: array
+        items:
+          $ref: '#/definitions/Score'
+  BatchUserSpecification:
+    type: object
+    properties:
+      numUsers:
+        type: integer
+        format: int32
+      prefix:
+        type: string
+    title: BatchUserSpecification
+  NewUser:
+    type: object
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    title: NewUser
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /raquel_alegre/PopChat/1.0.0
+schemes:
+ - https
