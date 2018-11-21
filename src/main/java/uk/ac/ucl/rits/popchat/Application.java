@@ -15,10 +15,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.client.BaseClientDetails;
+import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import me.atrox.haikunator.Haikunator;
+import uk.ac.ucl.rits.popchat.security.ResourceServerConfiguration;
 import uk.ac.ucl.rits.popchat.songs.Song;
 import uk.ac.ucl.rits.popchat.songs.SongRepository;
 import uk.ac.ucl.rits.popchat.users.PopUser;
@@ -125,6 +128,25 @@ public class Application {
 					throw new RuntimeException(
 							"Sorry. New users cannot be created at this time. Please contact support.");
 				}
+			}
+		};
+	}
+
+	@Bean
+	public CommandLineRunner ensureClient(final JdbcClientDetailsService service,
+			final PasswordEncoder passwordEncoder) {
+		return (args) -> {
+			int numClients = service.listClientDetails().size();
+			if (numClients > 0) {
+				log.trace("Oauth2 clients already present");
+			} else {
+				BaseClientDetails coreClient = new BaseClientDetails("popchat-fe-client",
+						ResourceServerConfiguration.RESOURCE_ID, "read,write,trust", "password,refresh_token",
+						"ROLE_USER,ROLE_ADMIN");
+				coreClient.setClientSecret(passwordEncoder.encode("IAmVeryVerySecret"));
+				service.addClientDetails(coreClient);
+				log.info("Created an OAuth2 client");
+				assert (service.listClientDetails().size() == 1);
 			}
 		};
 	}
