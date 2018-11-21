@@ -62,6 +62,8 @@ public class Application {
 			}
 
 			// Save songs to the database
+			int songsAdded = 0;
+			int songsPresent = 0;
 			for (String songFile : songEntries) {
 
 				// Read and deserialise the Song
@@ -73,10 +75,14 @@ public class Application {
 				// Ensure the song doesn't already exist
 				if (repository.findFirst1ByVideo(song.getVideo()) == null) {
 					repository.save(song);
+					songsAdded++;
+					log.trace("Added song: " + song.toString());
 				} else {
-					log.info(String.format("%s was already contained", song.toString()));
+					songsPresent++;
+					log.trace("Already present song: " + song.toString());
 				}
 			}
+			log.info(String.format("Total songs: %d, added %d on startup", songsPresent + songsAdded, songsAdded));
 
 		};
 	}
