@@ -30,7 +30,7 @@ import uk.ac.ucl.rits.popchat.users.UserRepository;
 /**
  * The Application is the entry point for the Application. It sets up the Spring
  * environment, as well as pre-loads songs into the database.
- * 
+ *
  * @author RSDG
  *
  */
@@ -46,7 +46,7 @@ public class Application {
 	/**
 	 * This initialises the repository with songs based on those provided in dbInit.
 	 * Songs are not double added to database based on the URL for the video.
-	 * 
+	 *
 	 * @param repository   The SongRepository to add words too
 	 * @param initDataRoot The directory to look for JSON files describing songs in
 	 * @return CommandLineRunner to initialise the database
