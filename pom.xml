@@ -17,6 +17,9 @@
 		<java.version>11</java.version>
 		<spring.security.oauth2.version>2.3.4.RELEASE</spring.security.oauth2.version>
 		<haikunator.version>2.0.1</haikunator.version>
+		<download.maven.plugin.version>1.4.1</download.maven.plugin.version>
+		<springfox.swagger2.version>2.9.2</springfox.swagger2.version>
+		<springfox.swagger.ui.version>2.9.2</springfox.swagger.ui.version>
 	</properties>
 
 	<parent>
@@ -84,12 +87,12 @@
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
-			<version>2.9.2</version>
+			<version>${springfox.swagger2.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.9.2</version>
+			<version>${springfox.swagger.ui.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -103,7 +106,7 @@
 				<!-- This plugin downloads the CMU data dictionary as part of the build -->
 				<groupId>com.googlecode.maven-download-plugin</groupId>
 				<artifactId>download-maven-plugin</artifactId>
-				<version>1.4.1</version>
+				<version>${download.maven.plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
