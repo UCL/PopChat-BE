@@ -21,6 +21,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import uk.ac.ucl.rits.popchat.security.hash.HashUtil;
 import uk.ac.ucl.rits.popchat.security.hash.Pbkdf2PasswordEncoder;
 
+/**
+ * This class sets up the security settings. It sets the default settings with a
+ * single exception - it specifies that passwords will be checked using the
+ * password encoder that we explicitly provide, allowing us to control hashing.
+ * 
+ * @author RSDG
+ *
+ */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
@@ -31,6 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private PopUserDetailsService userDetailsService;
 
+	// -------------- Settings for new passwords to create
 	@Value("${hash.algorithm}")
 	private String defaultEncoder;
 
@@ -57,6 +66,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
+	/**
+	 * Create an authentication provider that uses our specified password encoder to
+	 * validate passwords
+	 * 
+	 * @return The DaoAuthenticationProvider
+	 */
 	@Bean
 	public DaoAuthenticationProvider authProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -65,8 +80,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return authProvider;
 	}
 
+	/**
+	 * Create a PasswordEncoder (that encodes and checks passwords) that uses our
+	 * custom encoders and supports changes without invalidating old data
+	 * 
+	 * @return
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
+		// Create a map of different supported encoders (this will need to include
+		// legacy ones that still have active accounts).
 		Map<String, PasswordEncoder> encoders = new HashMap<>();
 		try {
 			encoders.put(HashUtil.PBKDF2, new Pbkdf2PasswordEncoder(this.defaultSaltAlgorithm, this.defaultSaltLength,
@@ -75,6 +98,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			SecurityConfiguration.log.error("Failed create password encoder", e);
 			throw new IllegalStateException("Cannnot create password encoder");
 		}
+		// This type of password encoder can switch between different ones
 		return new DelegatingPasswordEncoder(defaultEncoder, encoders);
 	}
 

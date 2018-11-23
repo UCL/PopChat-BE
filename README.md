@@ -33,7 +33,7 @@ This is a server to keep track of songs.
 1. Or run the tests
 
     ```bash
-    mvn test
+    mvn -Dspring.profiles.active=test [-Djava.version=<Your Java Version>] test
     ```
 
 ## Set up options

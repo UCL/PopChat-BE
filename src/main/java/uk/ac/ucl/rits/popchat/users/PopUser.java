@@ -2,26 +2,19 @@ package uk.ac.ucl.rits.popchat.users;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
 
 /**
  * A User represents a single individuals login credentials.
+ * It also stores what access privileges they have.
  * 
  * @author RSDG
  *
  */
 @Entity
-@Table(indexes = { @Index(columnList = ("username"), name = "username_index") })
 public class PopUser {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
-
 	@Column(length = 50, unique = true, nullable = false)
 	private String username;
 
@@ -30,21 +23,24 @@ public class PopUser {
 
 	private boolean isAdmin;
 
+	/**
+	 * Create a new PopUser
+	 */
 	public PopUser() {
 	}
 
+	/**
+	 * Create a new PopUser
+	 * 
+	 * @param username The username
+	 * @param password The password (must be hashed if you want to save it to the
+	 *                 DB)
+	 * @param isAdmin  True if they are an admin user
+	 */
 	public PopUser(String username, String password, boolean isAdmin) {
 		this.username = username;
 		this.password = password;
 		this.isAdmin = isAdmin;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	public String getUsername() {

@@ -27,6 +27,15 @@ public class Pbkdf2PasswordEncoder implements PasswordEncoder {
 	private final int hashLength;
 	private final int iterations;
 
+	/**
+	 * Create a new Pdkdf2PassswordEncoder
+	 * 
+	 * @param saltAlgorithm  The algorithm to use for the salt
+	 * @param saltLength     The length of the salt
+	 * @param hashLength     The length of the generated hash
+	 * @param hashIterations The number of iterations to run the hash for
+	 * @throws NoSuchAlgorithmException If your algorithm of choice isn't available
+	 */
 	public Pbkdf2PasswordEncoder(String saltAlgorithm, int saltLength, int hashLength, int hashIterations)
 			throws NoSuchAlgorithmException {
 		this.saltGen = RandomSalt.getSaltGenerator(saltAlgorithm);
@@ -57,6 +66,16 @@ public class Pbkdf2PasswordEncoder implements PasswordEncoder {
 		return MessageDigest.isEqual(encodedPassword.getBytes(), trialPassword.getBytes());
 	}
 
+	/**
+	 * Hash the given password with the given salt
+	 * 
+	 * @param password   The password to hash
+	 * @param salt       The salt to add to it
+	 * @param iterations The number of iterations to hash for
+	 * @param hashLength The length of the hash
+	 * @return The hash concatenated with with its specification (salt, iterations,
+	 *         and hashlength) with {@code :} separators
+	 */
 	private String hashPassword(char[] password, byte[] salt, int iterations, int hashLength) {
 		try {
 			PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, hashLength);
@@ -65,7 +84,8 @@ public class Pbkdf2PasswordEncoder implements PasswordEncoder {
 			byte[] hash = skf.generateSecret(spec).getEncoded();
 			char[] hashChar = Hex.encode(hash);
 			char[] saltChar = Hex.encode(salt);
-			return String.format("%s:%s:%d:%d", String.valueOf(hashChar), String.valueOf(saltChar), iterations, hashLength);
+			return String.format("%s:%s:%d:%d", String.valueOf(hashChar), String.valueOf(saltChar), iterations,
+					hashLength);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new IllegalStateException("The password specification is invalid. Please contact support");
 		}

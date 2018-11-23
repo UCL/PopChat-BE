@@ -90,6 +90,12 @@ public class Application {
 		};
 	}
 
+	/**
+	 * Ensure that passwords should fit in the database
+	 * @param saltLength
+	 * @param hashLength
+	 * @return
+	 */
 	@Bean
 	public CommandLineRunner ensureValidSizes(@Value("${salt.length}") int saltLength,
 			@Value("${hash.length}") int hashLength) {
@@ -102,6 +108,15 @@ public class Application {
 		};
 	}
 
+	/**
+	 * Ensure that an administrator user exists on start up.
+	 * If it doesn't, create a new one and print its logon details to the screen.
+	 * 
+	 * @param userRepo User repository
+	 * @param passwordEncoder PasswordEncoder
+	 * @param username Admin username to set
+	 * @return CommandLineRunner to perform this action
+	 */
 	@Bean
 	public CommandLineRunner ensureAdmin(UserRepository userRepo, PasswordEncoder passwordEncoder,
 			@Value("${default.admin.username}") final String username) {
@@ -132,6 +147,13 @@ public class Application {
 		};
 	}
 
+	/**
+	 * Ensure that a specified OAuth2 client exists on startup
+	 * 
+	 * @param service The Client Service
+	 * @param passwordEncoder PasswordEncoder
+	 * @return CommandLineRunner to preform this action
+	 */
 	@Bean
 	public CommandLineRunner ensureClient(final JdbcClientDetailsService service,
 			final PasswordEncoder passwordEncoder) {

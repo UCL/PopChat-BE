@@ -63,8 +63,25 @@ public class RhymesTest {
 	private static final String USER_USERNAME = "test-user";
 	private static final String USER_PASSWORD = "Very-secret-password";
 
+	/**
+	 * This ensures that the setup code to populate database entities only runs once
+	 */
 	private static boolean setup = true;
 
+	/**
+	 * Ensure that we have created everything that we need for the tests in this file.
+	 * Specifically this is:
+	 * <ul>
+	 * <li> Client defined by CLIENT_NAME and CLIENT_PASSWORD
+	 * <li> Admin user defined by ADMIN_USERNAME and ADMIN_PASSWORD
+	 * <li> Normal user defined by USER_USERNAME and USER_PASSWORD
+	 * </ul>
+	 * 
+	 * Note that internally this method is setup to only run once.
+	 * Normally, you would do this using a @BeforeClass annotation.
+	 * But that requires the method to be static, so we don't have access
+	 * to all the @Autowired fields that we require.
+	 */
 	@Before
 	public void setup() {
 		if (!setup) {
@@ -87,6 +104,14 @@ public class RhymesTest {
 		setup = false;
 	}
 
+	/**
+	 * Log in using OAuth2 with a given username and password. The login is done using the
+	 * test application credentials.
+	 * 
+	 * @param username The username to log in as
+	 * @param password The password for the username
+	 * @return Bearer token to use with subsequent queries
+	 */
 	private String obtainAccessToken(String username, String password) throws Exception {
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -151,6 +176,7 @@ public class RhymesTest {
 
 		ResultActions ra = mvc.perform(query);
 
+		// Unauthorized because you should be prompted to log in
 		ra.andExpect(status().isUnauthorized());
 	}
 
@@ -166,6 +192,7 @@ public class RhymesTest {
 
 		ResultActions ra = mvc.perform(query);
 
+		// Forbidden because your user doesn't have permission
 		ra.andExpect(status().isForbidden());
 	}
 
@@ -192,7 +219,9 @@ public class RhymesTest {
 			String data = result.getResponse().getContentAsString();
 			List<NewUser> newUsers = new ObjectMapper().readValue(data, new TypeReference<List<NewUser>>() {
 			});
+			//Ensure you have the right number
 			assert (newUsers.size() == numUsers);
+			//Ensure the usernames are right
 			newUsers.forEach(user -> {
 				assert (user.getUsername().startsWith(prefix));
 			});

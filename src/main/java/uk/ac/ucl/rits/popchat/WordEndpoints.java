@@ -4,8 +4,8 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ucl.rits.popchat.rhyming.Rhymes;
@@ -29,7 +29,7 @@ public class WordEndpoints {
 	 * @param word The word to rhyme with
 	 * @return All known words that rhyme with the given word (excluding itself)
 	 */
-	@RequestMapping("words/rhymes-with/{word}")
+	@GetMapping("words/rhymes-with/{word}")
 	public Set<String> rhymesWith(@PathVariable String word) {
 		log.trace(String.format("Finding rhymes for %s", word));
 		return Rhymes.getRhymes().rhymes(word.toLowerCase());
