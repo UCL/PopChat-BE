@@ -142,7 +142,7 @@ public class Application {
 			} else {
 				BaseClientDetails coreClient = new BaseClientDetails("popchat-fe-client",
 						ResourceServerConfiguration.RESOURCE_ID, "read,write,trust", "password,refresh_token",
-						"ROLE_USER,ROLE_ADMIN");
+						"ROLE_BASIC,ROLE_ADMIN");
 				coreClient.setClientSecret(passwordEncoder.encode("IAmVeryVerySecret"));
 				service.addClientDetails(coreClient);
 				log.info("Created an OAuth2 client");

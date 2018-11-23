@@ -22,9 +22,9 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 			.antMatchers("/user/signup").permitAll()
-			.antMatchers("/user/batch-signup").access(SECURED_WRITE_SCOPE)
+			.antMatchers("/user/batch-signup").hasRole("ADMIN")
 			.antMatchers("/actuator/**").permitAll()
-			.anyRequest().access(SECURED_READ_SCOPE)
+			.anyRequest().fullyAuthenticated()
 			.and().csrf().disable();
 	}
 }
