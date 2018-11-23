@@ -31,11 +31,6 @@ public class UserEndpoints {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	@PostMapping("/logout")
-	public void logout() {
-		log.info("Logout attempt!");
-	}
-
 	@PostMapping("/signup")
 	public void signup(@RequestBody NewUser user) {
 		PopUser existingUser = userRepo.findByUsername(user.getUsername());
