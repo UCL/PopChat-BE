@@ -1,6 +1,5 @@
 package uk.ac.ucl.rits.popchat.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -10,8 +9,6 @@ import org.springframework.security.oauth2.provider.expression.OAuth2MethodSecur
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
-	@Autowired
-	private SecurityConfiguration securityConfig;
 
 	@Override
 	protected MethodSecurityExpressionHandler createExpressionHandler() {

@@ -42,12 +42,6 @@ import uk.ac.ucl.rits.popchat.users.UserRepository;
 @AutoConfigureMockMvc
 public class RhymesTest {
 
-//	@Autowired
-//	private WebApplicationContext wac;
-//
-//	@Autowired
-//	private FilterChainProxy springSecurityFilterChain;
-
 	@Autowired
 	private MockMvc mvc;
 
@@ -73,9 +67,6 @@ public class RhymesTest {
 
 	@Before
 	public void setup() {
-		// Set up the MVC so you can make requests
-//		this.mvc = MockMvcBuilders.webAppContextSetup(this.wac).addFilter(springSecurityFilterChain).build();
-
 		if (!setup) {
 			return;
 		}
@@ -149,7 +140,7 @@ public class RhymesTest {
 	}
 
 	/**
-	 * Ensure that you cannot access rhymes with without loggin in
+	 * Ensure that you cannot access rhymes with without logging in
 	 * 
 	 * @throws Exception Something bad happened
 	 */
