@@ -91,10 +91,13 @@ public class Application {
 	}
 
 	/**
-	 * Ensure that passwords should fit in the database
-	 * @param saltLength
-	 * @param hashLength
-	 * @return
+	 * Ensure that passwords should fit in the database.
+	 * Since a password contains both the actual password and the data used to 
+	 * generate it, you need all of the data concatenated to fit in the column.
+	 * 
+	 * @param saltLength Length of generated salt
+	 * @param hashLength Length of password hash
+	 * @return CommandLineRunner to perform this check. Crashes startup if the check fails.
 	 */
 	@Bean
 	public CommandLineRunner ensureValidSizes(@Value("${salt.length}") int saltLength,
@@ -109,12 +112,12 @@ public class Application {
 	}
 
 	/**
-	 * Ensure that an administrator user exists on start up.
-	 * If it doesn't, create a new one and print its logon details to the screen.
+	 * Ensure that an administrator user exists on start up. If it doesn't, create a
+	 * new one and print its logon details to the screen.
 	 * 
-	 * @param userRepo User repository
+	 * @param userRepo        User repository
 	 * @param passwordEncoder PasswordEncoder
-	 * @param username Admin username to set
+	 * @param username        Admin username to set
 	 * @return CommandLineRunner to perform this action
 	 */
 	@Bean
@@ -148,26 +151,35 @@ public class Application {
 	}
 
 	/**
-	 * Ensure that a specified OAuth2 client exists on startup
+	 * Ensure that an OAuth2 client exists on startup.
 	 * 
-	 * @param service The Client Service
+	 * @param service         The Client Service
 	 * @param passwordEncoder PasswordEncoder
-	 * @return CommandLineRunner to preform this action
+	 * @param clientName      The name of the default client to create
+	 * @return CommandLineRunner to perform this action
 	 */
 	@Bean
-	public CommandLineRunner ensureClient(final JdbcClientDetailsService service,
-			final PasswordEncoder passwordEncoder) {
+	public CommandLineRunner ensureClient(final JdbcClientDetailsService service, final PasswordEncoder passwordEncoder,
+			@Value("${default.oauth2.client}") String clientName) {
 		return (args) -> {
 			int numClients = service.listClientDetails().size();
 			if (numClients > 0) {
+				// If a client already exists you don't need to do anything
 				log.trace("Oauth2 clients already present");
 			} else {
-				BaseClientDetails coreClient = new BaseClientDetails("popchat-fe-client",
+				// Create a new client that can login with a password and supports refresh tokens
+				BaseClientDetails coreClient = new BaseClientDetails(clientName,
 						ResourceServerConfiguration.RESOURCE_ID, "read,write,trust", "password,refresh_token",
 						"ROLE_BASIC,ROLE_ADMIN");
-				coreClient.setClientSecret(passwordEncoder.encode("IAmVeryVerySecret"));
+				
+				// Generate a random password
+				Haikunator haik = new Haikunator();
+				haik.setTokenLength(1);
+				String password = haik.haikunate();
+				coreClient.setClientSecret(passwordEncoder.encode(password));
 				service.addClientDetails(coreClient);
-				log.info("Created an OAuth2 client");
+				log.info(String.format("Created an OAuth2 client with name: %s% and password: %s", clientName,
+						password));
 				assert (service.listClientDetails().size() == 1);
 			}
 		};

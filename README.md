@@ -29,12 +29,17 @@ This is a server to keep track of songs.
     mvn spring-boot:run [-Djava.version=<Your Java Version>]
     ```
     * You can check the server is live by opening a browser on `http://localhost:8080/words/rhymes-with/bee`.
+    * When you run the code the system will automatically populate some data. Specifically it will:
+    	 - Load all the song JSON files into the songs database
+    	 - If there is no administrator user, it will create a new administrator and write their login credentials to the console
+    	 - If there is not AOuth2 client application, it will create a new application and write its credentials to the console
 
 1. Or run the tests
 
     ```bash
     mvn -Dspring.profiles.active=test [-Djava.version=<Your Java Version>] test
     ```
+    
 
 ## Set up options
 
@@ -51,6 +56,8 @@ The following options are used to configure the application:
  - `salt.length`: Length of the salt
  - `hash.length`: Length of the hash
  - `hash.iterations`: Number of hashing iterations.
+ - `default.admin.username`: The default administrator username if one doesn't exist
+ - `default.oauth2.client`: Name of default OAuth2 client to create if there isn't one
  
  Note that the length of salt + length of hash must be <= 600.
 
