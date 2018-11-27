@@ -178,7 +178,7 @@ public class Application {
 				String password = haik.haikunate();
 				coreClient.setClientSecret(passwordEncoder.encode(password));
 				service.addClientDetails(coreClient);
-				log.info(String.format("Created an OAuth2 client with name: %s% and password: %s", clientName,
+				log.info(String.format("Created an OAuth2 client with name: %s and password: %s", clientName,
 						password));
 				assert (service.listClientDetails().size() == 1);
 			}
