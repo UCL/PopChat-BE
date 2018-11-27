@@ -165,7 +165,7 @@ public class Application {
 			int numClients = service.listClientDetails().size();
 			if (numClients > 0) {
 				// If a client already exists you don't need to do anything
-				log.trace("Oauth2 clients already present");
+				log.info("Oauth2 clients already present");
 			} else {
 				// Create a new client that can login with a password and supports refresh tokens
 				BaseClientDetails coreClient = new BaseClientDetails(clientName,
