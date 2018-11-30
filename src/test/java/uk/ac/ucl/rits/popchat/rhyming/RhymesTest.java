@@ -9,7 +9,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
@@ -18,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.util.JacksonJsonParser;
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
@@ -33,6 +36,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.ac.ucl.rits.popchat.messages.NewUser;
+import uk.ac.ucl.rits.popchat.messages.SongResponse;
 import uk.ac.ucl.rits.popchat.security.ResourceServerConfiguration;
 import uk.ac.ucl.rits.popchat.users.PopUser;
 import uk.ac.ucl.rits.popchat.users.UserRepository;
@@ -69,18 +73,18 @@ public class RhymesTest {
 	private static boolean setup = true;
 
 	/**
-	 * Ensure that we have created everything that we need for the tests in this file.
-	 * Specifically this is:
+	 * Ensure that we have created everything that we need for the tests in this
+	 * file. Specifically this is:
 	 * <ul>
-	 * <li> Client defined by CLIENT_NAME and CLIENT_PASSWORD
-	 * <li> Admin user defined by ADMIN_USERNAME and ADMIN_PASSWORD
-	 * <li> Normal user defined by USER_USERNAME and USER_PASSWORD
+	 * <li>Client defined by CLIENT_NAME and CLIENT_PASSWORD
+	 * <li>Admin user defined by ADMIN_USERNAME and ADMIN_PASSWORD
+	 * <li>Normal user defined by USER_USERNAME and USER_PASSWORD
 	 * </ul>
 	 * 
-	 * Note that internally this method is setup to only run once.
-	 * Normally, you would do this using a @BeforeClass annotation.
-	 * But that requires the method to be static, so we don't have access
-	 * to all the @Autowired fields that we require.
+	 * Note that internally this method is setup to only run once. Normally, you
+	 * would do this using a @BeforeClass annotation. But that requires the method
+	 * to be static, so we don't have access to all the @Autowired fields that we
+	 * require.
 	 */
 	@Before
 	public void setup() {
@@ -105,8 +109,8 @@ public class RhymesTest {
 	}
 
 	/**
-	 * Log in using OAuth2 with a given username and password. The login is done using the
-	 * test application credentials.
+	 * Log in using OAuth2 with a given username and password. The login is done
+	 * using the test application credentials.
 	 * 
 	 * @param username The username to log in as
 	 * @param password The password for the username
@@ -219,12 +223,38 @@ public class RhymesTest {
 			String data = result.getResponse().getContentAsString();
 			List<NewUser> newUsers = new ObjectMapper().readValue(data, new TypeReference<List<NewUser>>() {
 			});
-			//Ensure you have the right number
+			// Ensure you have the right number
 			assert (newUsers.size() == numUsers);
-			//Ensure the usernames are right
+			// Ensure the usernames are right
 			newUsers.forEach(user -> {
 				assert (user.getUsername().startsWith(prefix));
 			});
+		});
+	}
+
+	/**
+	 * Test to make sure that you can list songs in a pageable manner
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testSong() throws Exception {
+		String accessToken = obtainAccessToken(USER_USERNAME, USER_PASSWORD);
+
+		int perPage = 3;
+		MockHttpServletRequestBuilder query = get("/songs").header("Authorization", "Bearer " + accessToken)
+				.param("page", "0").param("perPage", String.format("%d", perPage));
+
+		ResultActions ra = mvc.perform(query);
+
+		ra.andExpect(status().isOk()).andExpect((result) -> {
+			String data = result.getResponse().getContentAsString();
+			@SuppressWarnings("rawtypes")
+			Map<String, Object> songs = new ObjectMapper().readValue(data, new TypeReference<HashMap>() {
+			});
+			System.out.println(songs);
+			// Ensure you have the right number
+			assert (songs.get("size").equals(perPage));
 		});
 	}
 }
