@@ -7,13 +7,21 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
+/**
+ * This represents a Song in the database.
+ * <p>
+ * Since it is hard to identify what should be unique for a song, we use
+ * generated ids to tell them apart.
+ * 
+ * @author RSDG
+ */
 @Entity
 public class Song {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	
+
 	@NotNull
 	private String title;
 	@NotNull
@@ -23,9 +31,12 @@ public class Song {
 	@NotNull
 	private String video;
 
-	@Column(columnDefinition = "TEXT", nullable=false)
+	@Column(columnDefinition = "TEXT", nullable = false)
 	private String lyrics;
 
+	/**
+	 * Create a new Song
+	 */
 	public Song() {
 	}
 

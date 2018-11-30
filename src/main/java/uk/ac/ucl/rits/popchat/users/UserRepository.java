@@ -2,8 +2,20 @@ package uk.ac.ucl.rits.popchat.users;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface UserRepository extends CrudRepository<UserSecurity, Long> {
+/**
+ * Provides database operations to interact with the Pop Users
+ * 
+ * @author RSDG
+ *
+ */
+public interface UserRepository extends CrudRepository<PopUser, Long> {
 
-	public UserSecurity findByUsername(String username);
+	/**
+	 * Find a PopUser by their username
+	 * 
+	 * @param username The username to search for
+	 * @return The PopUser with that username if one exists
+	 */
+	public PopUser findByUsername(String username);
 
 }

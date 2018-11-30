@@ -1,5 +1,12 @@
 package uk.ac.ucl.rits.popchat.messages;
 
+/**
+ * This class represents what information specifies a new user account to
+ * create. All such accounts are non-administrative.
+ * 
+ * @author RSDG
+ *
+ */
 public class NewUser {
 
 	private String username;

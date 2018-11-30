@@ -1,4 +1,4 @@
-package uk.ac.ucl.rits.popchat.users.salt;
+package uk.ac.ucl.rits.popchat.security.salt;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
