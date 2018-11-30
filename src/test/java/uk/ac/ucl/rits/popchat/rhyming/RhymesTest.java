@@ -20,7 +20,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.util.JacksonJsonParser;
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
@@ -36,7 +35,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.ac.ucl.rits.popchat.messages.NewUser;
-import uk.ac.ucl.rits.popchat.messages.SongResponse;
 import uk.ac.ucl.rits.popchat.security.ResourceServerConfiguration;
 import uk.ac.ucl.rits.popchat.users.PopUser;
 import uk.ac.ucl.rits.popchat.users.UserRepository;
