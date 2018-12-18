@@ -1,5 +1,7 @@
 package uk.ac.ucl.rits.popchat.songs;
 
+import java.util.List;
+
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
@@ -17,5 +19,13 @@ public interface SongRepository extends PagingAndSortingRepository<Song, Long> {
 	 * @return First song that has that video if one exists
 	 */
 	public Song findFirst1ByVideo(String video);
+
+	/**
+	 * Find songs with a given title
+	 * 
+	 * @param title The title to search for
+	 * @return
+	 */
+	public List<Song> findByTitleIgnoreCase(String title);
 
 }
