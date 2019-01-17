@@ -176,7 +176,7 @@ public class Lyrics {
 	}
 
 	/**
-	 * Returns the length of set of lyrics.
+	 * Returns a proxy for the length of set of lyrics.
 	 * Note that the length of the lyrics is calculated as the time between the
 	 * <b>start</b> of the first line of lyrics and the <b>start</b> of the last line. 
 	 * 
