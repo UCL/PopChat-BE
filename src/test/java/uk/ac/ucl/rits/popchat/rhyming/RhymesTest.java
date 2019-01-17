@@ -149,6 +149,21 @@ public class RhymesTest {
 	}
 
 	/**
+	 * Make sure sure that non-rhyming words return an empty set not null
+	 */
+	@Test
+	public void testNoMatches() {
+		Rhymes rhymes = Rhymes.getRhymes();
+
+		assertNotNull(rhymes);
+
+		String word = "allicante";
+		Set<String> matches = rhymes.rhymes(word);
+		assertNotNull(matches);
+		assertTrue(matches.size() == 0);
+	}
+
+	/**
 	 * Make sure that the rhyming end point is hooked up
 	 * 
 	 * @throws Exception Something bad happened
