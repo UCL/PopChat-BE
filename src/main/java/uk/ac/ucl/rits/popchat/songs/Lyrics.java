@@ -186,4 +186,12 @@ public class Lyrics {
 		return Duration.between(this.lyrics.firstKey(), this.lyrics.lastKey());
 	}
 
+	
+	/**
+	 * Return the full text of the lyrics without timing information
+	 * @return The full song text
+	 */
+	public String getText() {
+		return this.lyrics.values().stream().reduce(String::concat).orElse("");
+	}
 }
