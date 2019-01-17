@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import uk.ac.ucl.rits.popchat.songs.Lyrics;
+
 /**
  * This class allows maps known words to sets of words that rhyme with it. Note
  * that it will on detect perfect rhymes.
@@ -175,6 +177,43 @@ public class Rhymes {
 				.collect(Collectors.toSet());
 	}
 
+	public Set<String> createRhymesWithGame(Lyrics fragment) {
+		Set<String> allWords = new HashSet<>(fragment.getWords());
+		Set<String> seenWords = new HashSet<>();
+		Set<Set<String>> rhymes = new HashSet<>();
+		// Find the equivalence classes of rhyming words in the fragment
+		for(String word : allWords) {
+			if(seenWords.contains(word)) {
+				continue;
+			}
+			Set<String> matches = this.rhymes(word);
+			matches.retainAll(allWords);
+			if(matches.isEmpty()) {
+				seenWords.add(word);
+			} else {
+				matches.add(word);
+				rhymes.add(matches);
+				seenWords.addAll(matches);
+			}
+		}
+		int totalWords = rhymes.stream()
+			.mapToInt( e -> e.size())
+			.sum();
+		if (totalWords == 0) {
+			// There are no rhyming matches in this set. 
+			return new HashSet<String>();
+		}
+		// Randomly pick based on word density
+		int pick = (int)(Math.random() * totalWords);
+		for(Set<String> words : rhymes) {
+			pick -= words.size();
+			if (pick <= 0) {
+				return words;
+			}
+		}
+		throw new IllegalStateException("Failed to select random set of rhyming words");
+	}
+	
 	/**
 	 * Get an instance of Rhymes that you can use
 	 * 
