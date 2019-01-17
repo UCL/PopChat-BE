@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This represents a set of timed lyrics.
@@ -113,7 +115,7 @@ public class Lyrics {
 	}
 
 	/**
-	 * Get a segment of the song that is approximately length in duration. 
+	 * Get a segment of the song that is approximately length in duration.
 	 * The last lyrics entry will be empty to make the segment as close to the right length as possible.
 	 * 
 	 * @param length Length of the target song segment
@@ -217,5 +219,20 @@ public class Lyrics {
 	public String getText() {
 		return this.lyrics.values().stream().map(line -> line + '\n').reduce(String::concat).orElse("");
 	}
+	
+	/**
+	 * Return a list of all the words in the song with trailing and leading punctuation removed.
+	 * Note that this might cause problems with words like {@code goin'} or {@code scammin'} since
+	 * they will have the trailing {@code '} in the rhyming dictionary.
+	 * @return List of song words
+	 */
+	public List<String> getWords(){
+		return this.lyrics.values().stream()
+				// Split lines into words
+				.flatMap(line -> Arrays.stream(line.split("\\s+")))
+				// Trim leading and trailing punctuation
+				.map(word -> word.replaceAll("^[^a-zA-Z]+", ""))
+				.map(word -> word.replaceAll("[^a-zA-Z]+$", ""))
+				.collect(Collectors.toList());
 	}
 }
