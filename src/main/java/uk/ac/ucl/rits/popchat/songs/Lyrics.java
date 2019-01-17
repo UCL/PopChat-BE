@@ -126,18 +126,17 @@ public class Lyrics {
 		// Initialise the array with -1 to indicate no match for any lyrics
 		Arrays.fill(segments, -1);
 		LocalTime[] durations = this.lyrics.keySet().toArray(new LocalTime[0]);
+		
+		// Length of each line
+		int[] lengths = this.lyrics.values().stream().mapToInt(line -> line.strip().split("\\s+").length).toArray();
+		
 		// For each lyric, check to see if it is far enough way from the ones that came
 		// before
-
 		int numMatchedSegments = 0;
 		for (int i = 1; i < this.lyrics.size(); i++) {
 			LocalTime current = durations[i];
 			// Look at the gap for all preceding lyrics
 			for (int j = 0; j < i; j++) {
-				if (segments[j] >= 0) {
-					// If we have already matched an end, skip the lyric
-					continue;
-				}
 				LocalTime past = durations[j];
 				// Get the time between the current lyrics
 				Duration gap = Duration.between(past, current);
@@ -145,27 +144,45 @@ public class Lyrics {
 				// Get the difference between this gap, and how long we wanted to wait
 				Duration mismatch = targetLength.minus(gap).abs();
 
-				/// TODO better to overshoot than under shoot?
-				if (mismatch.compareTo(maxMismatch) < 1) {
+				/// Get as close as possible
+				if (segments[j] == -1  && mismatch.compareTo(maxMismatch) < 1) {
+					// This is the first match, so we care about it
 					numMatchedSegments++;
+					segments[j] = i;
+				} else if(segments[j] > -1 && 
+						  mismatch.compareTo(maxMismatch) < 1 &&
+						  Duration.between(past, durations[segments[j]]).minus(targetLength).abs().compareTo(mismatch) < 0) {
+					// This is a subsequent better match than the first found
 					segments[j] = i;
 				}
 			}
 		}
-		// TODO: If I didn't find anythings should I try again but being more lenient?
 		// Now Segments is an array of indexes for length second song extracts
 		// From the valid keys, pick one
 		if (numMatchedSegments == 0) {
 			// There are none
 			return null;
 		}
-		// Pick a random segment
-		int idx = (int) (Math.random() * numMatchedSegments);
+		
+		// Create weights for each segments based on the number of words
+		int[] wordDensity = new int[lengths.length];
+		int totalWordDensity = 0;
 		for (int i = 0; i < segments.length; i++) {
-			if (segments[i] != 0) {
-				idx--;
+			// They are zero, unless you have a match
+			if (segments[i] >= 0) {
+				// If you have a match it is the sum of all the lines
+				for(int j = i; j <= segments[i]; j++) {
+					wordDensity[i] += lengths[j];
+				}
+				totalWordDensity += wordDensity[i];
 			}
-			if (idx == 0) {
+		}
+		
+		// Pick a random segment based on word density
+		int idx = (int) (Math.random() * totalWordDensity);
+		for (int i = 0; i < segments.length; i++) {
+			idx -= wordDensity[i];
+			if (idx <= 0) {
 				// This is the element you were looking for
 				@SuppressWarnings("unchecked")
 				Map.Entry<LocalTime, String>[] subSong = this.lyrics.entrySet().toArray(new Map.Entry[0]);
