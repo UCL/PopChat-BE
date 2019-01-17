@@ -209,6 +209,7 @@ public class Lyrics {
 	 * @return The full song text
 	 */
 	public String getText() {
-		return this.lyrics.values().stream().reduce(String::concat).orElse("");
+		return this.lyrics.values().stream().map(line -> line + '\n').reduce(String::concat).orElse("");
+	}
 	}
 }
