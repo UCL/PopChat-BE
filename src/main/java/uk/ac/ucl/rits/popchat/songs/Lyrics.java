@@ -113,7 +113,8 @@ public class Lyrics {
 	}
 
 	/**
-	 * Get a segment of the song that is approximately length in duration.
+	 * Get a segment of the song that is approximately length in duration. 
+	 * The last lyrics entry will be empty to make the segment as close to the right length as possible.
 	 * 
 	 * @param length Length of the target song segment
 	 * @param error The maximum deviation in segment length
@@ -171,7 +172,8 @@ public class Lyrics {
 			// They are zero, unless you have a match
 			if (segments[i] >= 0) {
 				// If you have a match it is the sum of all the lines
-				for(int j = i; j <= segments[i]; j++) {
+				// But not the last line, since that will be trimmed!
+				for(int j = i; j < segments[i]; j++) {
 					wordDensity[i] += lengths[j];
 				}
 				totalWordDensity += wordDensity[i];
@@ -186,7 +188,11 @@ public class Lyrics {
 				// This is the element you were looking for
 				@SuppressWarnings("unchecked")
 				Map.Entry<LocalTime, String>[] subSong = this.lyrics.entrySet().toArray(new Map.Entry[0]);
-				return new Lyrics(Arrays.copyOfRange(subSong, i, segments[i] + 1));
+				Lyrics fragment = new Lyrics(Arrays.copyOfRange(subSong, i, segments[i] + 1));
+				// Empty out the last line of lyrics. This makes this fragment as close as possible
+				// to the length it advertises itself to be, as times are to the start of the line
+				fragment.lyrics.put(fragment.lyrics.lastKey(), "");
+				return fragment;
 			}
 		}
 		throw new IllegalStateException("Randomly selected segment could not be recovered");
