@@ -144,7 +144,7 @@ public class RhymesTest {
 		String word = "RaQuEl";
 		Set<String> matches = rhymes.rhymes(word);
 		assertTrue(matches.size() > 0);
-		assertFalse(matches.contains(word));
+		assertFalse(matches.contains(word.toLowerCase()));
 		assertTrue(matches.contains("michelle"));
 	}
 

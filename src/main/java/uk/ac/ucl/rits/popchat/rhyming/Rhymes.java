@@ -169,8 +169,9 @@ public class Rhymes {
 	 * @return All the known words that rhyme with it.
 	 */
 	public Set<String> rhymes(String word) {
-		return getPhonesForWord(lookup, word.toLowerCase()).stream().map(w -> rhymingPart(w))
-				.flatMap(w -> this.rhymeLookup.get(w).stream()).filter(w -> !w.equals(word))
+		final String target = word.toLowerCase();
+		return getPhonesForWord(lookup, target).stream().map(w -> rhymingPart(w))
+				.flatMap(w -> this.rhymeLookup.get(w).stream()).filter(w -> !w.equals(target))
 				.collect(Collectors.toSet());
 	}
 
