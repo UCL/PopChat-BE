@@ -35,27 +35,27 @@ public class SongsTest {
 		List<Song> songs = songRepo.findByTitleIgnoreCase("Alexander Hamilton");
 
 		// There should only be one song called Hamilton
-		assert (songs.size() == 1);
+		assert songs.size() == 1;
 		Song song = songs.get(0);
 		Lyrics lyrics = new Lyrics(song);
 		String line = lyrics.lyricsAt(LocalTime.ofSecondOfDay(13));
 
 		String correct_line = "Forgotten spot in the Caribbean by providence";
-		assert (correct_line.equals(line));
+		assert correct_line.equals(line);
 
 		line = lyrics.lyricsAt(LocalTime.ofSecondOfDay(0));
-		assert (line == null);
+		assert line == null;
 
 		line = lyrics.lyricsAt(LocalTime.ofSecondOfDay(3));
-		assert (line == null);
+		assert line == null;
 
 		line = lyrics.lyricsAt(LocalTime.ofSecondOfDay(4));
 		correct_line = "How does a bastard, orphan, son of a whore and a";
-		assert (line.equals(correct_line));
+		assert line.equals(correct_line);
 
 		line = lyrics.lyricsAt(LocalTime.ofSecondOfDay(4000));
 		correct_line = "Alexander Hamilton!";
-		assert (line.equals(correct_line));
+		assert line.equals(correct_line);
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class SongsTest {
 		List<Song> songs = songRepo.findByTitleIgnoreCase("Alexander Hamilton");
 
 		// There should only be one song called Hamilton
-		assert (songs.size() == 1);
+		assert songs.size() == 1;
 		Song song = songs.get(0);
 
 		Lyrics lyrics = new Lyrics(song);
@@ -87,7 +87,7 @@ public class SongsTest {
 		List<Song> songs = songRepo.findByTitleIgnoreCase("Alexander Hamilton");
 
 		// There should only be one song called Hamilton
-		assert (songs.size() == 1);
+		assert songs.size() == 1;
 		Song song = songs.get(0);
 
 		Lyrics lyrics = new Lyrics(song);
@@ -113,6 +113,7 @@ public class SongsTest {
 			Set<String> test = Rhymes.getRhymes().rhymes(sampleWord);
 			assertTrue(test.add(sampleWord));
 
+			question.forEach(x -> x.toLowerCase());
 			boolean changed = question.retainAll(test);
 			for(String w : question) {
 				System.out.println(w);

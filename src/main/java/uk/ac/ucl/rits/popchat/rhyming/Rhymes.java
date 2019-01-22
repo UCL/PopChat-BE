@@ -78,7 +78,7 @@ public class Rhymes {
 
 	/**
 	 * Take a list of words, and create a map from rhyming endings to all possible words
-	 * 
+	 *
 	 * @param list List of words to map
 	 * @return A map from rhyming parts to rhyming words
 	 */
@@ -101,7 +101,7 @@ public class Rhymes {
 
 	/**
 	 * For each word, map it to a set of all of its pronunciations
-	 * 
+	 *
 	 * @param list A List of words and pronunciations where each word may appear
 	 *             more than once
 	 * @return A Map keyed on words, going to the set of possible pronunciations
@@ -121,7 +121,7 @@ public class Rhymes {
 
 	/**
 	 * Get the ending part of the word, ie the part involved in the rhyme
-	 * 
+	 *
 	 * @param phones All of the sounds making up the word. Each separated by a " "
 	 * @return The sounds making up only the rhyming bit (separated by " ")
 	 */
@@ -151,7 +151,7 @@ public class Rhymes {
 
 	/**
 	 * Get the possible pronunciations of a word
-	 * 
+	 *
 	 * @param lookup Map of all pronunciations of all known words
 	 * @param word   Word to look up
 	 * @return A set of all possible pronunciations
@@ -166,7 +166,7 @@ public class Rhymes {
 
 	/**
 	 * Find the words that rhyme with a given word
-	 * 
+	 *
 	 * @param word The word to find rhymes for
 	 * @return All the known words that rhyme with it.
 	 */
@@ -181,6 +181,7 @@ public class Rhymes {
 		Set<String> allWords = new HashSet<>(fragment.getWords());
 		Set<String> seenWords = new HashSet<>();
 		Set<Set<String>> rhymes = new HashSet<>();
+
 		// Find the equivalence classes of rhyming words in the fragment
 		for(String word : allWords) {
 			if(seenWords.contains(word)) {
@@ -200,7 +201,7 @@ public class Rhymes {
 			.mapToInt( e -> e.size())
 			.sum();
 		if (totalWords == 0) {
-			// There are no rhyming matches in this set. 
+			// There are no rhyming matches in this set.
 			return new HashSet<String>();
 		}
 		// Randomly pick based on word density
@@ -213,10 +214,10 @@ public class Rhymes {
 		}
 		throw new IllegalStateException("Failed to select random set of rhyming words");
 	}
-	
+
 	/**
 	 * Get an instance of Rhymes that you can use
-	 * 
+	 *
 	 * @return An instance of Rhymes
 	 */
 	public static Rhymes getRhymes() {
