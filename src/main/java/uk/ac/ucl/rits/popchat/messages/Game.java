@@ -15,6 +15,5 @@ public class Game {
 		Lyrics fragment = lyrics.getSegment(Duration.ofSeconds(40));
 		Rhymes rhymes = Rhymes.getRhymes();
 		Set<String> words = rhymes.createRhymesWithGame(fragment);
-
 	}
 }

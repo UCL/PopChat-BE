@@ -95,7 +95,15 @@ public class SongsTest {
 		Duration dur = Duration.ofSeconds(40);
 
 		Lyrics subSong = lyrics.getSegment(dur);
+
+		System.out.println(subSong.getText());
+
 		Set<String> question = Rhymes.getRhymes().createRhymesWithGame(subSong);
+
+		for(String w : question) {
+			System.out.println(w);
+		}
+		System.out.println("----------");
 
 		assertNotNull(question);
 		assertTrue(subSong.getWords().containsAll(question));
@@ -104,7 +112,14 @@ public class SongsTest {
 			String sampleWord = question.iterator().next();
 			Set<String> test = Rhymes.getRhymes().rhymes(sampleWord);
 			assertTrue(test.add(sampleWord));
-			assertFalse(question.retainAll(test));
+
+			boolean changed = question.retainAll(test);
+			for(String w : question) {
+				System.out.println(w);
+			}
+
+			assertFalse(changed);
+
 		}
 	}
 }
