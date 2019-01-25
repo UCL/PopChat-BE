@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,8 +58,8 @@ public class Application {
 		return (args) -> {
 			List<String> songEntries = new ArrayList<>();
 
-			try (BufferedReader read = new BufferedReader(
-					new InputStreamReader(Application.class.getResourceAsStream(initDataRoot)))) {
+			try (BufferedReader read = new BufferedReader(new InputStreamReader(
+					Application.class.getResourceAsStream(initDataRoot), Charset.forName("UTF-8")))) {
 				read.lines().filter(name -> name.endsWith(".json")).forEach(songEntries::add);
 			} catch (IOException e) {
 				log.error(String.format("Failed in read %s directory to find songs", initDataRoot));
@@ -91,13 +92,14 @@ public class Application {
 	}
 
 	/**
-	 * Ensure that passwords should fit in the database.
-	 * Since a password contains both the actual password and the data used to 
-	 * generate it, you need all of the data concatenated to fit in the column.
-	 * 
+	 * Ensure that passwords should fit in the database. Since a password contains
+	 * both the actual password and the data used to generate it, you need all of
+	 * the data concatenated to fit in the column.
+	 *
 	 * @param saltLength Length of generated salt
 	 * @param hashLength Length of password hash
-	 * @return CommandLineRunner to perform this check. Crashes startup if the check fails.
+	 * @return CommandLineRunner to perform this check. Crashes startup if the check
+	 *         fails.
 	 */
 	@Bean
 	public CommandLineRunner ensureValidSizes(@Value("${salt.length}") int saltLength,
@@ -114,7 +116,7 @@ public class Application {
 	/**
 	 * Ensure that an administrator user exists on start up. If it doesn't, create a
 	 * new one and print its logon details to the screen.
-	 * 
+	 *
 	 * @param userRepo        User repository
 	 * @param passwordEncoder PasswordEncoder
 	 * @param username        Admin username to set
@@ -152,7 +154,7 @@ public class Application {
 
 	/**
 	 * Ensure that an OAuth2 client exists on startup.
-	 * 
+	 *
 	 * @param service         The Client Service
 	 * @param passwordEncoder PasswordEncoder
 	 * @param clientName      The name of the default client to create
@@ -167,20 +169,21 @@ public class Application {
 				// If a client already exists you don't need to do anything
 				log.info("Oauth2 clients already present");
 			} else {
-				// Create a new client that can login with a password and supports refresh tokens
+				// Create a new client that can login with a password and supports refresh
+				// tokens
 				BaseClientDetails coreClient = new BaseClientDetails(clientName,
 						ResourceServerConfiguration.RESOURCE_ID, "read,write,trust", "password,refresh_token",
 						"ROLE_BASIC,ROLE_ADMIN");
-				
+
 				// Generate a random password
 				Haikunator haik = new Haikunator();
 				haik.setTokenLength(1);
 				String password = haik.haikunate();
 				coreClient.setClientSecret(passwordEncoder.encode(password));
 				service.addClientDetails(coreClient);
-				log.info(String.format("Created an OAuth2 client with name: %s and password: %s", clientName,
-						password));
-				assert (service.listClientDetails().size() == 1);
+				log.info(
+						String.format("Created an OAuth2 client with name: %s and password: %s", clientName, password));
+				assert service.listClientDetails().size() == 1;
 			}
 		};
 	}

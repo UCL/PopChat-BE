@@ -1,5 +1,6 @@
 package uk.ac.ucl.rits.popchat.security.hash;
 
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -15,7 +16,7 @@ import uk.ac.ucl.rits.popchat.security.salt.SaltGenerator;
 
 /**
  * A slow hasher that uses the PBKDR2 hash
- * 
+ *
  * @author RSDG
  *
  */
@@ -29,7 +30,7 @@ public class Pbkdf2PasswordEncoder implements PasswordEncoder {
 
 	/**
 	 * Create a new Pdkdf2PassswordEncoder
-	 * 
+	 *
 	 * @param saltAlgorithm  The algorithm to use for the salt
 	 * @param saltLength     The length of the salt
 	 * @param hashLength     The length of the generated hash
@@ -63,12 +64,12 @@ public class Pbkdf2PasswordEncoder implements PasswordEncoder {
 		int iterations = Integer.parseInt(parts[2]);
 		int hashLength = Integer.parseInt(parts[3]);
 		String trialPassword = this.hashPassword(passChars, salt, iterations, hashLength);
-		return MessageDigest.isEqual(encodedPassword.getBytes(), trialPassword.getBytes());
+		return MessageDigest.isEqual(encodedPassword.getBytes(Charset.forName("UTF-8")), trialPassword.getBytes(Charset.forName("UTF-8")));
 	}
 
 	/**
 	 * Hash the given password with the given salt
-	 * 
+	 *
 	 * @param password   The password to hash
 	 * @param salt       The salt to add to it
 	 * @param iterations The number of iterations to hash for
