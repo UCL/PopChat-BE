@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -27,7 +28,7 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 /**
  * Configure the OAuth with mostly default settings
- * 
+ *
  * @author RSDG
  *
  */
@@ -60,6 +61,7 @@ public class OAuthConfiguration extends AuthorizationServerConfigurerAdapter {
 
 	/**
 	 * Store the OAuth tokens and credentials in the database
+	 *
 	 * @return TokenStore backed by our database
 	 */
 	@Bean
@@ -69,6 +71,7 @@ public class OAuthConfiguration extends AuthorizationServerConfigurerAdapter {
 
 	/**
 	 * Use the default access denied handler
+	 *
 	 * @return Access Denied handler
 	 */
 	@Bean
@@ -79,7 +82,7 @@ public class OAuthConfiguration extends AuthorizationServerConfigurerAdapter {
 	/**
 	 * Create a client manager (for OAuth client applications) that is backed by the
 	 * database
-	 * 
+	 *
 	 * @return The Client Application manager
 	 */
 	@Bean
@@ -111,7 +114,7 @@ public class OAuthConfiguration extends AuthorizationServerConfigurerAdapter {
 	/**
 	 * Create a DataSource initialiser that will ensure that we have the OAuth
 	 * tables present in the database
-	 * 
+	 *
 	 * @param dataSource The database to ensure the tables are present in
 	 * @return The DataSourceInitializer
 	 */
@@ -126,13 +129,28 @@ public class OAuthConfiguration extends AuthorizationServerConfigurerAdapter {
 	/**
 	 * Create a DatabasePopulator that initializes the database with the content of
 	 * the schemaScript field
-	 * 
+	 *
 	 * @return The DatabasePopulator
 	 */
 	private DatabasePopulator databasePopulator() {
 		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 		populator.addScript(schemaScript);
 		return populator;
+	}
+
+	/**
+	 * Link the CORS Options filter into the filter chain
+	 *
+	 * @return
+	 */
+	@Bean
+	public FilterRegistrationBean<PopCorsFilter> loggingFilter() {
+		FilterRegistrationBean<PopCorsFilter> registrationBean = new FilterRegistrationBean<>();
+
+		registrationBean.setFilter(new PopCorsFilter());
+		registrationBean.addUrlPatterns("/oauth/token");
+
+		return registrationBean;
 	}
 
 }

@@ -1,6 +1,7 @@
 package uk.ac.ucl.rits.popchat.security;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -9,7 +10,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 /**
  * Configures the resource server. This is the notional entity being access
  * by the OAuth2. In our case, this is the REST API we provide.
- * 
+ *
  * @author RSDG
  *
  */
@@ -30,6 +31,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
+			// Spring CORS security problem
+			.antMatchers(HttpMethod.OPTIONS, "/oauth/token").permitAll()
 			.antMatchers("/user/signup").permitAll()
 			.antMatchers("/user/batch-signup").hasRole("ADMIN")
 			// Make these endpoints public for debugging.
@@ -44,6 +47,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 			// Normal endpoints require any authentication
 			.anyRequest().fullyAuthenticated()
 			// Debug - Disable CSRF for testing with postman for debugging
-			.and().csrf().disable();
+			.and().cors().and().csrf().disable();
 	}
 }
