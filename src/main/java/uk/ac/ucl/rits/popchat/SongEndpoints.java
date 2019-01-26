@@ -26,7 +26,7 @@ public class SongEndpoints {
 
 	/**
 	 * Get the list of songs.
-	 * 
+	 *
 	 * @param page    Which page to get. The first page is 0.
 	 * @param perPage How many results to get per page
 	 * @return A Page of Song results (incomplete information about the songs).
@@ -47,7 +47,7 @@ public class SongEndpoints {
 		}
 		Song song = songSearch.get();
 		Lyrics lyrics = new Lyrics(song);
-		Game game = new Game(lyrics);
+		Game game = new Game(song, lyrics);
 
 		return game;
 	}
