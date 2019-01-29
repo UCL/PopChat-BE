@@ -1,13 +1,21 @@
 package uk.ac.ucl.rits.popchat.security.hash;
 
 /**
- * Constants to store different hashing algorithms
- * 
+ * Constants to store different hashing algorithms.
+ *
  * @author RSDG
  *
  */
 public class HashUtil {
 
-	public final static String PBKDF2 = "PBKDF2";
+    /**
+     * The PBKF2 Hash method.
+     */
+    public static final String PBKDF2 = "PBKDF2";
+
+    /**
+     * You cannot construct a HashUtil.
+     */
+    private HashUtil() {}
 
 }

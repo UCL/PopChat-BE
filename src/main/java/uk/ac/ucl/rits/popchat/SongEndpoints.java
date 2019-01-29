@@ -18,38 +18,50 @@ import uk.ac.ucl.rits.popchat.songs.Lyrics;
 import uk.ac.ucl.rits.popchat.songs.Song;
 import uk.ac.ucl.rits.popchat.songs.SongRepository;
 
+/**
+ * Controller for song related endpoints.
+ *
+ * @author RSDG
+ *
+ */
 @RestController
 public class SongEndpoints {
 
-	@Autowired
-	private SongRepository songRepo;
+    @Autowired
+    private SongRepository songRepo;
 
-	/**
-	 * Get the list of songs.
-	 * 
-	 * @param page    Which page to get. The first page is 0.
-	 * @param perPage How many results to get per page
-	 * @return A Page of Song results (incomplete information about the songs).
-	 */
-	@GetMapping("/songs")
-	public Page<SongResponse> getSongs(@RequestParam(value = "page", defaultValue = "0") int page,
-			@RequestParam(value = "perPage", defaultValue = "20") int perPage) {
-		Pageable pageable = PageRequest.of(page, perPage);
-		Page<Song> songs = this.songRepo.findAll(pageable);
-		return songs.map(s -> new SongResponse(s));
-	}
+    /**
+     * Get the list of songs.
+     *
+     * @param page    Which page to get. The first page is 0.
+     * @param perPage How many results to get per page
+     * @return A Page of Song results (incomplete information about the songs).
+     */
+    @GetMapping("/songs")
+    public Page<SongResponse> getSongs(@RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "perPage", defaultValue = "20") int perPage) {
+        Pageable pageable = PageRequest.of(page, perPage);
+        Page<Song> songs = this.songRepo.findAll(pageable);
+        return songs.map(s -> new SongResponse(s));
+    }
 
-	@PostMapping("/play/{songId}")
-	public Game playGame(@PathVariable("songId") long songId) {
-		Optional<Song> songSearch = songRepo.findById(songId);
-		if (songSearch.isEmpty()) {
-			throw new IllegalArgumentException("So such song " + songId);
-		}
-		Song song = songSearch.get();
-		Lyrics lyrics = new Lyrics(song);
-		Game game = new Game(lyrics);
+    /**
+     * Generate a game for a given song.
+     *
+     * @param songId Song to generate the game for
+     * @return Game to generate
+     */
+    @PostMapping("/play/{songId}")
+    public Game playGame(@PathVariable("songId") long songId) {
+        Optional<Song> songSearch = songRepo.findById(songId);
+        if (songSearch.isEmpty()) {
+            throw new IllegalArgumentException("So such song " + songId);
+        }
+        Song song = songSearch.get();
+        Lyrics lyrics = new Lyrics(song);
+        Game game = new Game(song, lyrics);
 
-		return game;
-	}
+        return game;
+    }
 
 }
