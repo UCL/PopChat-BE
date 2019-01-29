@@ -2,43 +2,86 @@ package uk.ac.ucl.rits.popchat.messages;
 
 import uk.ac.ucl.rits.popchat.songs.Song;
 
+/**
+ * This is the summary information sent about a song.
+ *
+ * @author RSDG
+ *
+ */
 public class SongResponse {
 
-	private long id;
-	private String title;
-	private String artist;
+    private long   id;
+    private String title;
+    private String artist;
 
-	public SongResponse() {
-	}
+    /**
+     * Create a new SongResponse.
+     */
+    public SongResponse() {}
 
-	public SongResponse(Song s) {
-		this.id = s.getId();
-		this.title = s.getTitle();
-		this.artist = s.getArtist();
-	}
+    /**
+     * Copy constructor.
+     *
+     * @param s Song to copy
+     */
+    public SongResponse(Song s) {
+        this.id = s.getId();
+        this.title = s.getTitle();
+        this.artist = s.getArtist();
+    }
 
-	public long getId() {
-		return id;
-	}
+    /**
+     * Get the Id.
+     *
+     * @return the id
+     */
+    public long getId() {
+        return id;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    /**
+     * Set the id.
+     *
+     * @param id Id to set
+     */
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    /**
+     * Get the title.
+     *
+     * @return title
+     */
+    public String getTitle() {
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    /**
+     * Set the title.
+     *
+     * @param title title
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public String getArtist() {
-		return artist;
-	}
+    /**
+     * Get the artist.
+     *
+     * @return artist
+     */
+    public String getArtist() {
+        return artist;
+    }
 
-	public void setArtist(String artist) {
-		this.artist = artist;
-	}
+    /**
+     * Set artist.
+     *
+     * @param artist artist
+     */
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
 
 }

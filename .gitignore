@@ -7,9 +7,10 @@ src/main/resources/cmudict-*
 .settings/
 .classpath
 .project
+.checkstyle
 
 # Temp files
 *~
 .vscode/
-
+*.swp
 /target/
