@@ -1,5 +1,6 @@
 package uk.ac.ucl.rits.popchat;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import me.atrox.haikunator.Haikunator;
 import uk.ac.ucl.rits.popchat.messages.BatchUserSpecification;
 import uk.ac.ucl.rits.popchat.messages.NewUser;
+import uk.ac.ucl.rits.popchat.messages.PasswordChange;
 import uk.ac.ucl.rits.popchat.users.PopUser;
 import uk.ac.ucl.rits.popchat.users.UserRepository;
 
@@ -98,5 +100,33 @@ public class UserEndpoints {
         }
         return generatedUsers;
     }
+
+    /**
+     * Change a user's password.
+     *
+     * @param passwords The old and new passwords
+     * @param principal The user's credentials
+     * @return True if the password changed successfully.
+     */
+    @PostMapping("/change-password")
+    public boolean changePassword(Principal principal, @RequestBody PasswordChange passwords) {
+        String newPassword = passwords.getNewPassword();
+        if (newPassword.isEmpty()) {
+            throw new RuntimeException("New password cannot be empty");
+        }
+        final String username = principal.getName();
+        PopUser user = userRepo.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("The current user does not exist");
+        }
+        if (!this.passwordEncoder.matches(passwords.getOldPassword(), user.getPassword())) {
+         throw new RuntimeException("Incorrect current password");
+        }
+        String newEncodedPassword = this.passwordEncoder.encode(newPassword);
+        user.setPassword(newEncodedPassword);
+        this.userRepo.save(user);
+        return true;
+    }
+
 
 }
