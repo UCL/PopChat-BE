@@ -38,6 +38,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 // Spring CORS security problem
                 .antMatchers(HttpMethod.OPTIONS, "/oauth/token").permitAll().antMatchers("/user/signup").permitAll()
                 .antMatchers("/user/batch-signup").hasRole("ADMIN")
+                .antMatchers("/user/list").hasRole("ADMIN")
+                .antMatchers("/user/promote").hasRole("ADMIN")
                 // Make these endpoints public for debugging.
                 // Debug - Actuator
                 .antMatchers("/actuator/**").permitAll()

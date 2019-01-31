@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,8 @@ import me.atrox.haikunator.Haikunator;
 import uk.ac.ucl.rits.popchat.messages.BatchUserSpecification;
 import uk.ac.ucl.rits.popchat.messages.NewUser;
 import uk.ac.ucl.rits.popchat.messages.PasswordChange;
+import uk.ac.ucl.rits.popchat.messages.UserListing;
+import uk.ac.ucl.rits.popchat.messages.UserPromotion;
 import uk.ac.ucl.rits.popchat.users.PopUser;
 import uk.ac.ucl.rits.popchat.users.UserRepository;
 
@@ -120,7 +123,7 @@ public class UserEndpoints {
             throw new RuntimeException("The current user does not exist");
         }
         if (!this.passwordEncoder.matches(passwords.getOldPassword(), user.getPassword())) {
-         throw new RuntimeException("Incorrect current password");
+            throw new RuntimeException("Incorrect current password");
         }
         String newEncodedPassword = this.passwordEncoder.encode(newPassword);
         user.setPassword(newEncodedPassword);
@@ -128,5 +131,39 @@ public class UserEndpoints {
         return true;
     }
 
+    /**
+     * Get all user's and their admin status.
+     *
+     * @return list of all usernames with their admin status
+     */
+    @GetMapping("/list")
+    public List<UserListing> listAll() {
+        List<UserListing> allUsers = new ArrayList<>();
+        userRepo.findAll().forEach(user -> {
+            allUsers.add(new UserListing(user.getUsername(), user.getIsAdmin()));
+        });
 
+        return allUsers;
+    }
+
+    /**
+     * Promote a user to admin, or remove their admin status. If promote is true it
+     * makes them an admin. Otherwise removes it.
+     *
+     * @param promote the user to change.
+     * @return true if the operation was a success.
+     */
+    @PostMapping("/promote")
+    public boolean makeAdmin(@RequestBody UserPromotion promote) {
+        final PopUser user = userRepo.findByUsername(promote.getUsername());
+        if (user == null) {
+            throw new RuntimeException("No such user");
+        }
+        if (user.getIsAdmin() == promote.isPromote()) {
+            return true;
+        }
+        user.setIsAdmin(promote.isPromote());
+        userRepo.save(user);
+        return true;
+    }
 }
