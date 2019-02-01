@@ -148,13 +148,19 @@ public class UserEndpoints {
 
     /**
      * Promote a user to admin, or remove their admin status. If promote is true it
-     * makes them an admin. Otherwise removes it.
+     * makes them an admin. Otherwise removes it. You cannot change your own status.
+     * This is to ensure there is always at least one admin who is able to use the
+     * system.
      *
-     * @param promote the user to change.
+     * @param promote   the user to change.
+     * @param principal The user requesting the change
      * @return true if the operation was a success.
      */
     @PostMapping("/promote")
-    public boolean makeAdmin(@RequestBody UserPromotion promote) {
+    public boolean makeAdmin(@RequestBody UserPromotion promote, Principal principal) {
+        if (promote.getUsername().equals(principal.getName())) {
+            throw new RuntimeException("You cannot change your own status");
+        }
         final PopUser user = userRepo.findByUsername(promote.getUsername());
         if (user == null) {
             throw new RuntimeException("No such user");
