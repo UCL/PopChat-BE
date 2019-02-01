@@ -218,6 +218,24 @@ public class Lyrics {
     }
 
     /**
+     * Get the start time of this section of lyrics.
+     *
+     * @return Lyrics start time
+     */
+    public LocalTime getStartTime() {
+        return this.lyrics.firstKey();
+    }
+
+    /**
+     * Get the end time of this section of lyrics.
+     *
+     * @return Lyrics end time
+     */
+    public LocalTime getEndTime() {
+        return this.lyrics.lastKey();
+    }
+
+    /**
      * Return the full text of the lyrics without timing information.
      *
      * @return The full song text
