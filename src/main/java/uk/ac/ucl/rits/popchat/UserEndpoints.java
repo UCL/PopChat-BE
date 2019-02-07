@@ -3,6 +3,7 @@ package uk.ac.ucl.rits.popchat;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.atrox.haikunator.Haikunator;
+import uk.ac.ucl.rits.popchat.game.SongGameQuestion;
+import uk.ac.ucl.rits.popchat.game.SongGameQuestionOption;
+import uk.ac.ucl.rits.popchat.game.SongGameResponse;
+import uk.ac.ucl.rits.popchat.game.SongGameResponseRepository;
 import uk.ac.ucl.rits.popchat.messages.BatchUserSpecification;
 import uk.ac.ucl.rits.popchat.messages.NewUser;
 import uk.ac.ucl.rits.popchat.messages.PasswordChange;
+import uk.ac.ucl.rits.popchat.messages.ResultsTableRow;
 import uk.ac.ucl.rits.popchat.messages.UserListing;
 import uk.ac.ucl.rits.popchat.messages.UserPromotion;
 import uk.ac.ucl.rits.popchat.users.PopUser;
@@ -36,24 +42,18 @@ public class UserEndpoints {
     /**
      * User database.
      */
-    private UserRepository      userRepo;
+    @Autowired
+    private UserRepository             userRepo;
     /**
      * PasswordEncoder for hashing.
      */
-    private PasswordEncoder     passwordEncoder;
-    private static final Logger log = LoggerFactory.getLogger(UserEndpoints.class);
-
-    /**
-     * Create a UserEndpoints.
-     *
-     * @param userRepo        The users repository
-     * @param passwordEncoder The password encoder
-     */
     @Autowired
-    public UserEndpoints(UserRepository userRepo, PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepo;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private PasswordEncoder            passwordEncoder;
+
+    @Autowired
+    private SongGameResponseRepository responseRepo;
+
+    private static final Logger        log = LoggerFactory.getLogger(UserEndpoints.class);
 
     /**
      * Create a new user account. The new user must have a unique username, and will
@@ -171,5 +171,40 @@ public class UserEndpoints {
         user.setIsAdmin(promote.isPromote());
         userRepo.save(user);
         return true;
+    }
+
+    /**
+     * Get all the results.
+     *
+     * @return A list of Rows to show the results for analysis
+     */
+    @GetMapping("/results")
+    public List<ResultsTableRow> getResult() {
+        Iterable<SongGameResponse> responses = responseRepo.findAll();
+        List<ResultsTableRow> results = new ArrayList<>();
+        for (SongGameResponse r : responses) {
+            ResultsTableRow row = new ResultsTableRow();
+
+            // Set user data
+            row.setUsername(r.getUser().getUsername());
+
+            // Set answer data
+            SongGameQuestionOption selected = r.getQuestionOptionId();
+            row.setAnswer(selected.getValue());
+            row.setAnswerCorrect(selected.isCorrect());
+            row.setAnswerSelectTime(r.getQuestionEndTime());
+
+            // Set question data
+            SongGameQuestion q = selected.getParentQuestion();
+            row.setQuestionStartTime(r.getQuestionStartTime());
+            row.setQuestion(q.getQuestionText());
+            row.setAllAnswers(q.getAnswers().stream().map(a -> a.getValue()).collect(Collectors.toList()));
+
+            // Set song data
+            row.setSongTitle(q.getParentGame().getSong().getTitle());
+
+            results.add(row);
+        }
+        return results;
     }
 }
