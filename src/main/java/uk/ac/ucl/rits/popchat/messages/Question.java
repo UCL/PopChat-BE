@@ -3,6 +3,8 @@ package uk.ac.ucl.rits.popchat.messages;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.ac.ucl.rits.popchat.game.SongGameQuestion;
+
 /**
  * Represents a single question in a song game.
  *
@@ -10,6 +12,8 @@ import java.util.List;
  *
  */
 public class Question {
+
+    private int                  questionId;
     private String               questionText;
     private List<QuestionOption> answers;
 
@@ -19,14 +23,14 @@ public class Question {
     public Question() {}
 
     /**
-     * Create a Question.
+     * Create a Question from a record.
      *
-     * @param text    The question text
-     * @param answers List of all answers
+     * @param q database record to copy
      */
-    public Question(String text, List<QuestionOption> answers) {
-        this.questionText = text;
-        this.answers = new ArrayList<>(answers);
+    public Question(SongGameQuestion q) {
+        this.questionText = q.getQuestionText();
+        this.answers = new ArrayList<>();
+        q.getAnswers().forEach(a -> this.answers.add(new QuestionOption(a)));
     }
 
     /**
@@ -55,6 +59,20 @@ public class Question {
      */
     public void setAnswers(List<QuestionOption> answers) {
         this.answers = answers;
+    }
+
+    /**
+     * @return the questionId
+     */
+    public int getQuestionId() {
+        return questionId;
+    }
+
+    /**
+     * @param questionId the questionId to set
+     */
+    public void setQuestionId(int questionId) {
+        this.questionId = questionId;
     }
 
 }

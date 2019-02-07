@@ -1,5 +1,7 @@
 package uk.ac.ucl.rits.popchat.messages;
 
+import uk.ac.ucl.rits.popchat.game.SongGameQuestionOption;
+
 /**
  * A possible answer to a single question for a song game.
  *
@@ -7,6 +9,8 @@ package uk.ac.ucl.rits.popchat.messages;
  *
  */
 public class QuestionOption {
+
+    private int     optionId;
     private String  value;
     private boolean correct;
 
@@ -46,11 +50,25 @@ public class QuestionOption {
     /**
      * Create a question option.
      *
-     * @param value   The text
-     * @param correct If the answer is correct
+     * @param o the option to copy
      */
-    public QuestionOption(String value, boolean correct) {
-        this.value = value;
-        this.correct = correct;
+    public QuestionOption(SongGameQuestionOption o) {
+        this.value = o.getValue();
+        this.correct = o.isCorrect();
     }
+
+    /**
+     * @return the optionId
+     */
+    public int getOptionId() {
+        return optionId;
+    }
+
+    /**
+     * @param optionId the optionId to set
+     */
+    public void setOptionId(int optionId) {
+        this.optionId = optionId;
+    }
+
 }

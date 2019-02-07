@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.ac.ucl.rits.popchat.game.SongGame;
+import uk.ac.ucl.rits.popchat.game.SongGameRepository;
 import uk.ac.ucl.rits.popchat.messages.Game;
 import uk.ac.ucl.rits.popchat.messages.SongResponse;
 import uk.ac.ucl.rits.popchat.songs.Lyrics;
@@ -29,6 +31,9 @@ public class SongEndpoints {
 
     @Autowired
     private SongRepository songRepo;
+
+    @Autowired
+    private SongGameRepository gameRepo;
 
     /**
      * Get the list of songs.
@@ -59,9 +64,13 @@ public class SongEndpoints {
         }
         Song song = songSearch.get();
         Lyrics lyrics = new Lyrics(song);
-        Game game = new Game(song, lyrics);
+        SongGame game = new SongGame(song, lyrics);
 
-        return game;
+        game = this.gameRepo.save(game);
+
+        return new Game(game);
+    }
+
     }
 
 }
