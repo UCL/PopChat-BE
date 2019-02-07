@@ -55,6 +55,7 @@ public class QuestionOption {
     public QuestionOption(SongGameQuestionOption o) {
         this.value = o.getValue();
         this.correct = o.isCorrect();
+        this.optionId = o.getOptionId();
     }
 
     /**

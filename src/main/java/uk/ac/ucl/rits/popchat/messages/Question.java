@@ -30,6 +30,7 @@ public class Question {
     public Question(SongGameQuestion q) {
         this.questionText = q.getQuestionText();
         this.answers = new ArrayList<>();
+        this.questionId = q.getQuestionId();
         q.getAnswers().forEach(a -> this.answers.add(new QuestionOption(a)));
     }
 
