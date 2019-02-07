@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import uk.ac.ucl.rits.popchat.rhyming.Rhymes;
 import uk.ac.ucl.rits.popchat.songs.Lyrics;
 import uk.ac.ucl.rits.popchat.songs.Song;
+import uk.ac.ucl.rits.popchat.users.PopUser;
 
 /**
  * A song game as stored in the database.
@@ -37,6 +38,10 @@ public class SongGame {
     @NotNull
     @ManyToOne
     private Song                   song;
+
+    @NotNull
+    @ManyToOne
+    private PopUser                user;
 
     @NotNull
     private int                    songStartSeconds;
@@ -175,6 +180,20 @@ public class SongGame {
      */
     public void setQuestions(List<SongGameQuestion> questions) {
         this.questions = questions;
+    }
+
+    /**
+     * @return the user
+     */
+    public PopUser getUser() {
+        return user;
+    }
+
+    /**
+     * @param user the user to set
+     */
+    public void setUser(PopUser user) {
+        this.user = user;
     }
 
 }

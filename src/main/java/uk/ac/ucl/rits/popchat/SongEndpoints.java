@@ -1,5 +1,6 @@
 package uk.ac.ucl.rits.popchat;
 
+import java.security.Principal;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import uk.ac.ucl.rits.popchat.messages.SongResponse;
 import uk.ac.ucl.rits.popchat.songs.Lyrics;
 import uk.ac.ucl.rits.popchat.songs.Song;
 import uk.ac.ucl.rits.popchat.songs.SongRepository;
+import uk.ac.ucl.rits.popchat.users.PopUser;
+import uk.ac.ucl.rits.popchat.users.UserRepository;
 
 /**
  * Controller for song related endpoints.
@@ -28,6 +31,9 @@ import uk.ac.ucl.rits.popchat.songs.SongRepository;
  */
 @RestController
 public class SongEndpoints {
+
+    @Autowired
+    private UserRepository     userRepo;
 
     @Autowired
     private SongRepository songRepo;
@@ -54,10 +60,11 @@ public class SongEndpoints {
      * Generate a game for a given song.
      *
      * @param songId Song to generate the game for
+     * @param principal User generating the game
      * @return Game to generate
      */
     @PostMapping("/play/{songId}")
-    public Game playGame(@PathVariable("songId") long songId) {
+    public Game playGame(@PathVariable("songId") long songId, Principal principal) {
         Optional<Song> songSearch = songRepo.findById(songId);
         if (songSearch.isEmpty()) {
             throw new IllegalArgumentException("So such song " + songId);
@@ -66,6 +73,11 @@ public class SongEndpoints {
         Lyrics lyrics = new Lyrics(song);
         SongGame game = new SongGame(song, lyrics);
 
+        PopUser user = this.userRepo.findByUsername(principal.getName());
+        if (user == null) {
+            throw new RuntimeException("Cannot find user");
+        }
+        game.setUser(user);
         game = this.gameRepo.save(game);
 
         return new Game(game);
