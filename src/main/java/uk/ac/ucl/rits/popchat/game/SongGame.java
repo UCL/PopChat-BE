@@ -73,6 +73,7 @@ public class SongGame {
         Rhymes rhymes = Rhymes.getRhymes();
         Set<Set<String>> multiWords = rhymes.createRhymesWithGame(fragment);
 
+        this.questions = new ArrayList<>();
         for (Set<String> words : multiWords) {
 
             String[] wordsArray = words.toArray(new String[0]);
@@ -83,7 +84,6 @@ public class SongGame {
 
             List<String> uniqueLyrics = new ArrayList<>(allLyrics);
 
-            this.questions = new ArrayList<>();
             for (int i = 0; i < wordsArray.length; i++) {
                 if (i == key) {
                     continue;
