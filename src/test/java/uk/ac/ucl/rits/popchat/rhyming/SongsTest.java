@@ -106,30 +106,32 @@ public class SongsTest {
 
         System.out.println(subSong.getText());
 
-        Set<String> question = Rhymes.getRhymes().createRhymesWithGame(subSong);
+        Set<Set<String>> sets = Rhymes.getRhymes().createRhymesWithGame(subSong);
 
-        for (String w : question) {
-            System.out.println(w);
-        }
-        System.out.println("----------");
-
-        assertNotNull(question);
-        assertTrue(subSong.getWords().containsAll(question));
-
-        if (!question.isEmpty()) {
-            String sampleWord = question.iterator().next();
-            Set<String> test = Rhymes.getRhymes().rhymes(sampleWord);
-            assertTrue(test.add(sampleWord));
-
-            question.forEach(x -> x.toLowerCase());
-            /* boolean changed = */question.retainAll(test);
+        for (Set<String> question : sets) {
             for (String w : question) {
                 System.out.println(w);
             }
+            System.out.println("----------");
 
-            // This part of the test doesn't work because of Issue #26
-            // assertFalse(changed);
+            assertNotNull(question);
+            assertTrue(subSong.getWords().containsAll(question));
 
+            if (!question.isEmpty()) {
+                String sampleWord = question.iterator().next();
+                Set<String> test = Rhymes.getRhymes().rhymes(sampleWord);
+                assertTrue(test.add(sampleWord));
+
+                question.forEach(x -> x.toLowerCase());
+                /* boolean changed = */question.retainAll(test);
+                for (String w : question) {
+                    System.out.println(w);
+                }
+
+                // This part of the test doesn't work because of Issue #26
+                // assertFalse(changed);
+
+            }
         }
     }
 }

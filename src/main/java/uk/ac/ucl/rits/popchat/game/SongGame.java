@@ -71,21 +71,25 @@ public class SongGame {
         this.songEndSeconds = fragment.getEndTime().toSecondOfDay();
 
         Rhymes rhymes = Rhymes.getRhymes();
-        Set<String> words = rhymes.createRhymesWithGame(fragment);
-        String[] wordsArray = words.toArray(new String[0]);
-        int key = (int) (Math.random() * wordsArray.length);
+        Set<Set<String>> multiWords = rhymes.createRhymesWithGame(fragment);
 
-        Set<String> allLyrics = new HashSet<String>(fragment.getWords());
-        allLyrics.removeAll(words);
+        for (Set<String> words : multiWords) {
 
-        List<String> uniqueLyrics = new ArrayList<>(allLyrics);
+            String[] wordsArray = words.toArray(new String[0]);
+            int key = (int) (Math.random() * wordsArray.length);
 
-        this.questions = new ArrayList<>();
-        for (int i = 0; i < wordsArray.length; i++) {
-            if (i == key) {
-                continue;
+            Set<String> allLyrics = new HashSet<String>(fragment.getWords());
+            allLyrics.removeAll(words);
+
+            List<String> uniqueLyrics = new ArrayList<>(allLyrics);
+
+            this.questions = new ArrayList<>();
+            for (int i = 0; i < wordsArray.length; i++) {
+                if (i == key) {
+                    continue;
+                }
+                this.questions.add(generateQuestion(wordsArray[key], wordsArray[i], uniqueLyrics));
             }
-            this.questions.add(generateQuestion(wordsArray[key], wordsArray[i], uniqueLyrics));
         }
     }
 

@@ -186,7 +186,7 @@ public class Rhymes {
      * @param fragment Song fragment to pick words from
      * @return Set of words from the fragment which all should rhyme
      */
-    public Set<String> createRhymesWithGame(Lyrics fragment) {
+    public Set<Set<String>> createRhymesWithGame(Lyrics fragment) {
         Set<String> allWords = new HashSet<>(fragment.getWords());
         Set<String> seenWords = new HashSet<>();
         Set<Set<String>> rhymes = new HashSet<>();
@@ -209,17 +209,10 @@ public class Rhymes {
         int totalWords = rhymes.stream().mapToInt(e -> e.size()).sum();
         if (totalWords == 0) {
             // There are no rhyming matches in this set.
-            return new HashSet<String>();
+            return new HashSet<Set<String>>();
         }
-        // Randomly pick based on word density
-        int pick = (int) (Math.random() * totalWords);
-        for (Set<String> words : rhymes) {
-            pick -= words.size();
-            if (pick <= 0) {
-                return words;
-            }
-        }
-        throw new IllegalStateException("Failed to select random set of rhyming words");
+        // Return all the rhyming sets
+        return rhymes;
     }
 
     /**
