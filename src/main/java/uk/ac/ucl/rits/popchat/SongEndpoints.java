@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -124,6 +125,7 @@ public class SongEndpoints {
 
     /**
      * Set the details for a song. Editing them if necessary.
+     * A song is being edited only if it has an ID.
      *
      * @param song Song details to update
      * @return Outcomes of attempting to insert the song
@@ -140,13 +142,13 @@ public class SongEndpoints {
             return results;
         }
 
-        if (!sameTitle.isEmpty()) {
+        if (song.getId() == 0 && !sameTitle.isEmpty()) {
             results.setTitleErrorMessage("This combination of title and artist already exist");
             results.setArtistErrorMessage("This combination of title and artist already exist");
             return results;
         }
 
-        if (this.songRepo.findFirst1ByVideo(song.getVideo()) != null) {
+        if (song.getId() == 0 && this.songRepo.findFirst1ByVideo(song.getVideo()) != null) {
             results.setVideoErrorMessage("A song with this video already exists in the database");
             return results;
         }
@@ -170,5 +172,32 @@ public class SongEndpoints {
         // If all the checks pass then all is well
         results.setValid(true);
         return results;
+    }
+
+    /**
+     * Get the full list of all songs.
+     *
+     * @return All the songs and their data.
+     */
+    @GetMapping("/viewSongs")
+    public Iterable<Song> viewSongs() {
+        return this.songRepo.findAll();
+    }
+
+    /**
+     * Delete a song.
+     *
+     * @param songId Song to delete
+     * @return Game to generate
+     */
+    @DeleteMapping("/song/{songId}")
+    public Boolean deleteSong(@PathVariable("songId") long songId) {
+        try {
+            this.songRepo.deleteById(songId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

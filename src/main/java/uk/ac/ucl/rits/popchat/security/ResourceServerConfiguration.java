@@ -42,6 +42,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/user/promote").hasRole("ADMIN")
                 .antMatchers("/user/results").hasRole("ADMIN")
                 .antMatchers("/setSong").hasRole("ADMIN")
+                .antMatchers("/viewSongs").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/song/*").hasRole("ADMIN")
                 // Make these endpoints public for debugging.
                 // Debug - Actuator
                 .antMatchers("/actuator/**").permitAll()
