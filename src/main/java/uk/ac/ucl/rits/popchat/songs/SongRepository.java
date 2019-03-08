@@ -28,4 +28,13 @@ public interface SongRepository extends PagingAndSortingRepository<Song, Long> {
      */
     List<Song> findByTitleIgnoreCase(String title);
 
+    /**
+     * Find songs with a given title and author.
+     *
+     * @param title  The title to search for
+     * @param artist The artist to search for
+     * @return All matching songs.
+     */
+    List<Song> findByTitleAndArtistIgnoreCase(String title, String artist);
+
 }

@@ -1,6 +1,7 @@
 package uk.ac.ucl.rits.popchat;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import uk.ac.ucl.rits.popchat.game.SongGameResponse;
 import uk.ac.ucl.rits.popchat.game.SongGameResponseRepository;
 import uk.ac.ucl.rits.popchat.messages.Game;
 import uk.ac.ucl.rits.popchat.messages.GameAnswer;
+import uk.ac.ucl.rits.popchat.messages.SongAdditionResults;
 import uk.ac.ucl.rits.popchat.messages.SongResponse;
 import uk.ac.ucl.rits.popchat.songs.Lyrics;
 import uk.ac.ucl.rits.popchat.songs.Song;
@@ -118,5 +120,55 @@ public class SongEndpoints {
         resp.setQuestionEndTime(response.getEndTime());
 
         this.responseRepo.save(resp);
+    }
+
+    /**
+     * Set the details for a song. Editing them if necessary.
+     *
+     * @param song Song details to update
+     * @return Outcomes of attempting to insert the song
+     */
+    @PostMapping("/setSong")
+    public SongAdditionResults setSong(@RequestBody Song song) {
+        SongAdditionResults results = new SongAdditionResults();
+        results.setValid(false);
+
+        List<Song> sameTitle = this.songRepo.findByTitleAndArtistIgnoreCase(song.getTitle(), song.getArtist());
+
+        if (song.getYear() < 1) {
+            results.setYearErrorMessage("You must have a valid year (>=1)");
+            return results;
+        }
+
+        if (!sameTitle.isEmpty()) {
+            results.setTitleErrorMessage("This combination of title and artist already exist");
+            results.setArtistErrorMessage("This combination of title and artist already exist");
+            return results;
+        }
+
+        if (this.songRepo.findFirst1ByVideo(song.getVideo()) != null) {
+            results.setVideoErrorMessage("A song with this video already exists in the database");
+            return results;
+        }
+
+        try {
+            new Lyrics(song);
+        } catch (Exception e) {
+            e.printStackTrace();
+            results.setLyricsErrorMessage("LRC lyrics were invalid. Please check them");
+            return results;
+        }
+
+        try {
+            this.songRepo.save(song);
+        } catch (Exception e) {
+            results.setTitleErrorMessage(
+                    "Song failed to save for an unknown reason. Please contact your administrator");
+            return results;
+        }
+
+        // If all the checks pass then all is well
+        results.setValid(true);
+        return results;
     }
 }
