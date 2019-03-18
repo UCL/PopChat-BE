@@ -1,5 +1,6 @@
 package uk.ac.ucl.rits.popchat.messages;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,8 @@ public class Question {
     private int                  questionId;
     private String               questionText;
     private List<QuestionOption> answers;
+    private LocalTime            questionStart;
+    private LocalTime            questionEnd;
 
     /**
      * Create an empty question.
@@ -31,6 +34,8 @@ public class Question {
         this.questionText = q.getQuestionText();
         this.answers = new ArrayList<>();
         this.questionId = q.getQuestionId();
+        this.questionEnd = q.getEndTime();
+        this.questionStart = q.getStartTime();
         q.getAnswers().forEach(a -> this.answers.add(new QuestionOption(a)));
     }
 
@@ -74,6 +79,34 @@ public class Question {
      */
     public void setQuestionId(int questionId) {
         this.questionId = questionId;
+    }
+
+    /**
+     * @return the questionStart
+     */
+    public LocalTime getQuestionStart() {
+        return questionStart;
+    }
+
+    /**
+     * @param questionStart the questionStart to set
+     */
+    public void setQuestionStart(LocalTime questionStart) {
+        this.questionStart = questionStart;
+    }
+
+    /**
+     * @return the questionEnd
+     */
+    public LocalTime getQuestionEnd() {
+        return questionEnd;
+    }
+
+    /**
+     * @param questionEnd the questionEnd to set
+     */
+    public void setQuestionEnd(LocalTime questionEnd) {
+        this.questionEnd = questionEnd;
     }
 
 }
