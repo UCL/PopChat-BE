@@ -32,7 +32,7 @@ public class Game {
     public Game(SongGame g) {
         this.url = g.getSong().getVideo();
         this.gameId = g.getGameId();
-        this.startTime = g.getSongEndSeconds();
+        this.startTime = g.getSongStartSeconds();
         this.endTime = g.getSongEndSeconds();
         this.questions = new ArrayList<>();
         g.getQuestions().forEach(q -> this.questions.add(new Question(q)));
