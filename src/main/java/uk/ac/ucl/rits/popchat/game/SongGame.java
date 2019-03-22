@@ -190,6 +190,7 @@ public class SongGame {
             rhymingWords = rhymes.rhymes(keyWord);
             // We need to add some non rhyming words to bolster the possible answers
             lyrics.removeAll(rhymingWords);
+            lyrics = new ArrayList<>(new HashSet<>(lyrics));
             while (answers.size() < 4 && !lyrics.isEmpty()) {
                 String ans = lyrics.remove((int) (Math.random() * lyrics.size()));
                 answers.add(new SongGameQuestionOption(ans, false));
