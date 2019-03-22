@@ -175,32 +175,32 @@ public class SongGame {
         List<SongGameQuestionOption> answers = new ArrayList<>();
         answers.add(new SongGameQuestionOption(answer, true));
 
-        Set<String> rhymingWords = rhymes.rhymes(question);
-        rhymingWords.removeAll(lyrics);
+        Set<String> rhymingWords = rhymes.rhymes(keyWord);
 
-        if (rhymingWords.size() > 3) {
-            // We have more options than we need. Delete all but 3 at random
-            List<String> words = new ArrayList<String>(rhymingWords);
-            while (words.size() > 3) {
-                words.remove((int) (Math.random() * words.size()));
-            }
-            rhymingWords = new HashSet<>(words);
-        } else if (rhymingWords.size() < 3) {
+        rhymingWords.removeAll(lyrics);
+        List<String> wrongOptions = new ArrayList<>(rhymingWords);
+
+        while (!wrongOptions.isEmpty() && answers.size() < 4) {
+            String ans = wrongOptions.remove((int) (Math.random() * wrongOptions.size()));
+            answers.add(new SongGameQuestionOption(ans, false));
+        }
+
+
+        if (answers.size() < 4) {
+            rhymingWords = rhymes.rhymes(keyWord);
             // We need to add some non rhyming words to bolster the possible answers
             lyrics.removeAll(rhymingWords);
-            while (rhymingWords.size() < 3 && lyrics.size() > 0) {
-                rhymingWords.add(lyrics.remove((int) (Math.random() * lyrics.size())));
+            while (answers.size() < 4 && !lyrics.isEmpty()) {
+                String ans = lyrics.remove((int) (Math.random() * lyrics.size()));
+                answers.add(new SongGameQuestionOption(ans, false));
             }
         }
 
-//        if (rhymingWords.size() < 3) {
+//        if (answers.size() < 4) {
 //            // Not enough rhyming words or lyrics. Need to add random words
 //            rhymes.
 //        }
 
-        for (String ans : rhymingWords) {
-            answers.add(new SongGameQuestionOption(ans, false));
-        }
 
         Collections.shuffle(answers);
 
