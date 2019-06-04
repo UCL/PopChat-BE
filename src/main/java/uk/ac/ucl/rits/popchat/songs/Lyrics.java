@@ -10,6 +10,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -28,12 +29,19 @@ public class Lyrics {
     private final TreeMap<LocalTime, String> lyrics;
 
     /**
+     * Create a lyrics with no lyrics in it.
+     */
+    public Lyrics() {
+        this.lyrics = new TreeMap<>();
+    }
+
+    /**
      * Create the Lyrics for a song.
      *
      * @param song Song to create lyrics for
      */
     public Lyrics(Song song) {
-        lyrics = new TreeMap<>();
+        this();
         this.parse(song.getLyrics());
     }
 
@@ -43,7 +51,7 @@ public class Lyrics {
      * @param data Timed song lines
      */
     public Lyrics(Map.Entry<LocalTime, String>[] data) {
-        lyrics = new TreeMap<>();
+        this();
         for (Map.Entry<LocalTime, String> d : data) {
             lyrics.put(d.getKey(), d.getValue());
         }
@@ -70,7 +78,7 @@ public class Lyrics {
                         if (parts.length > 1) {
                             // Trim the starting [
                             String right = parts[0].substring(1);
-                            String lyric = parts[parts.length - 1];
+                            String lyric = parts[parts.length - 1].trim();
 
                             TemporalAccessor temp = format.parse(right);
                             LocalTime time = LocalTime.from(temp);
@@ -259,5 +267,64 @@ public class Lyrics {
                 // Trim leading and trailing punctuation
                 .map(word -> word.replaceAll("^[^a-zA-Z]+", "")).map(word -> word.replaceAll("[^a-zA-Z]+$", ""))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Add a line of lyrics.
+     *
+     * @param time The time within the song of the start of the line.
+     * @param line The lyrics.
+     */
+    public void addLine(LocalTime time, String line) {
+        this.lyrics.put(time, line);
+    }
+
+    /**
+     * Check if there are any lyrics in this set of Lyrics.
+     *
+     * @return true if there are no lyrics.
+     */
+    public boolean isEmpty() {
+        if (this.lyrics.isEmpty()) {
+            return true;
+        }
+        for (String line : this.lyrics.values()) {
+            if (!line.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Fragment a set of Lyrics into a sequence set with a given number of lines in
+     * each chunk.
+     *
+     * @param lines Lines per fragment
+     * @return list of sequential lyrics
+     */
+    public List<Lyrics> fragment(int lines) {
+        List<Lyrics> fragments = new ArrayList<>();
+        Lyrics current = new Lyrics();
+        int lyricsInCurrent = 0;
+        for (Map.Entry<LocalTime, String> line : this.lyrics.entrySet()) {
+            if (lyricsInCurrent > 0 && lyricsInCurrent % lines == 0) {
+                // The bland end line serves to tell us properly how long this section is.
+                current.addLine(line.getKey(), "");
+                fragments.add(current);
+                current = new Lyrics();
+            }
+            String lyric = line.getValue();
+            current.addLine(line.getKey(), lyric);
+            if (!lyric.isEmpty()) {
+                // Only interesting lines count
+                lyricsInCurrent++;
+            }
+        }
+        if (!current.isEmpty()) {
+            // the last current might not have been added. It also might be empty
+            fragments.add(current);
+        }
+        return fragments;
     }
 }

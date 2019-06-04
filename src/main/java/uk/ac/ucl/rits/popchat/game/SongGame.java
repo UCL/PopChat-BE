@@ -1,6 +1,7 @@
 package uk.ac.ucl.rits.popchat.game;
 
 import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -16,6 +17,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.data.util.Pair;
 
 import uk.ac.ucl.rits.popchat.rhyming.Rhymes;
 import uk.ac.ucl.rits.popchat.songs.Lyrics;
@@ -71,49 +74,138 @@ public class SongGame {
         this.songEndSeconds = fragment.getEndTime().toSecondOfDay();
 
         Rhymes rhymes = Rhymes.getRhymes();
-        Set<Set<String>> multiWords = rhymes.createRhymesWithGame(fragment);
+        List<Lyrics> questionSequence = fragment.fragment(2);
 
         this.questions = new ArrayList<>();
-        for (Set<String> words : multiWords) {
-
-            String[] wordsArray = words.toArray(new String[0]);
-            int key = (int) (Math.random() * wordsArray.length);
-
-            Set<String> allLyrics = new HashSet<String>(fragment.getWords());
-            allLyrics.removeAll(words);
-
-            List<String> uniqueLyrics = new ArrayList<>(allLyrics);
-
-            for (int i = 0; i < wordsArray.length; i++) {
-                if (i == key) {
+        for (Lyrics subFragment : questionSequence) {
+            Set<Set<String>> multiWords = rhymes.createRhymesWithGame(subFragment);
+            Pair<String, String> question = this.pickRandomPair(multiWords);
+            if (question == null) {
+                question = this.pickRandomQuestion(subFragment, rhymes, 10);
+                if (question == null) {
                     continue;
                 }
-                this.questions.add(generateQuestion(wordsArray[key], wordsArray[i], uniqueLyrics));
+            }
+            Set<String> uniqueLyrics = new HashSet<>(subFragment.getWords());
+            uniqueLyrics.remove(question.getFirst());
+            uniqueLyrics.remove(question.getSecond());
+
+            this.questions.add(generateQuestion(question.getFirst(), question.getSecond(), subFragment.getStartTime(),
+                    subFragment.getEndTime(), new ArrayList<>(uniqueLyrics), rhymes));
+
+        }
+
+    }
+
+    /**
+     * Try generate a random question based on any given word.
+     *
+     * @param lyrics   The lyrics of the song fragment
+     * @param rhymes   Rhymes object
+     * @param maxTries Number of times to try before giving up
+     * @return Question and answer word
+     */
+    private Pair<String, String> pickRandomQuestion(Lyrics lyrics, Rhymes rhymes, int maxTries) {
+        List<String> words = new ArrayList<>(new HashSet<>(lyrics.getWords()));
+        Pair<String, String> question = null;
+
+        for (int i = 0; i < maxTries && question == null; i++) {
+            String ans = words.get((int) (Math.random() * words.size()));
+            List<String> qs = new ArrayList<>(rhymes.rhymes(ans));
+            if (qs.size() > 0) {
+                question = Pair.of(qs.get((int) (Math.random() * qs.size())), ans);
             }
         }
+        return question;
+    }
+
+    /**
+     * Given sets of mutually rhyming words in a song, pick two words to use for a
+     * question.
+     *
+     * @param multiWords Set of sets of rhyming words within the song.
+     * @return A pair of words to use for a question and right answer.
+     */
+    private Pair<String, String> pickRandomPair(Set<Set<String>> multiWords) {
+        int sets = multiWords.size();
+        if (sets == 0) {
+            return null;
+        }
+        int setPicked = (int) (Math.random() * sets);
+        Set<String> words = null;
+        int i = 0;
+        for (Set<String> w : multiWords) {
+            words = w;
+            i++;
+            if (i == setPicked) {
+                break;
+            }
+        }
+        if (words.size() < 2) {
+            throw new IllegalStateException("Rhyming set had less than two words");
+        }
+
+        String[] wordsArray = words.toArray(new String[0]);
+        int key = (int) (Math.random() * wordsArray.length);
+        String question = wordsArray[key];
+
+        words.remove(question);
+        wordsArray = words.toArray(new String[0]);
+        key = (int) (Math.random() * wordsArray.length);
+        String answer = wordsArray[key];
+
+        return Pair.of(question, answer);
     }
 
     /**
      * Generate a new question.
      *
-     * @param keyWord Key word
-     * @param answer  the right answer
-     * @param lyrics  wrong answer suggestions
+     * @param keyWord   Key word
+     * @param answer    the right answer
+     * @param startTime When the question should start
+     * @param endTime   When the question should end
+     * @param lyrics    wrong answer suggestions
+     * @param rhymes    Rhymes object
      * @return A question
      */
-    private SongGameQuestion generateQuestion(String keyWord, String answer, List<String> lyrics) {
-        String question = String.format("Which of the following words rhymes with %s?", keyWord);
+    private SongGameQuestion generateQuestion(String keyWord, String answer, LocalTime startTime, LocalTime endTime,
+            List<String> lyrics, Rhymes rhymes) {
+        String question = String.format("Which of the following words is in the song and rhymes with %s?", keyWord);
 
         List<SongGameQuestionOption> answers = new ArrayList<>();
         answers.add(new SongGameQuestionOption(answer, true));
 
-        for (int i = 0; i < 3; i++) {
-            answers.add(new SongGameQuestionOption(lyrics.get((int) (Math.random() * lyrics.size())), false));
+        Set<String> rhymingWords = rhymes.rhymes(keyWord);
+
+        rhymingWords.removeAll(lyrics);
+        List<String> wrongOptions = new ArrayList<>(rhymingWords);
+
+        while (!wrongOptions.isEmpty() && answers.size() < 4) {
+            String ans = wrongOptions.remove((int) (Math.random() * wrongOptions.size()));
+            answers.add(new SongGameQuestionOption(ans, false));
         }
+
+
+        if (answers.size() < 4) {
+            rhymingWords = rhymes.rhymes(keyWord);
+            // We need to add some non rhyming words to bolster the possible answers
+            lyrics.removeAll(rhymingWords);
+            lyrics = new ArrayList<>(new HashSet<>(lyrics));
+            while (answers.size() < 4 && !lyrics.isEmpty()) {
+                String ans = lyrics.remove((int) (Math.random() * lyrics.size()));
+                answers.add(new SongGameQuestionOption(ans, false));
+            }
+        }
+
+//        if (answers.size() < 4) {
+//            // Not enough rhyming words or lyrics. Need to add random words
+//            rhymes.
+//        }
+
 
         Collections.shuffle(answers);
 
-        return new SongGameQuestion(this, question, answers);
+        return new SongGameQuestion(this, question, startTime, endTime, answers);
     }
 
     /**

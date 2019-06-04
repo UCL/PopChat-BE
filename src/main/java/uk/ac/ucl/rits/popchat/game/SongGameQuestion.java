@@ -1,5 +1,6 @@
 package uk.ac.ucl.rits.popchat.game;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class SongGameQuestion {
     private SongGame                     parentGame;
 
     private String                       questionText;
+    private LocalTime                    startTime;
+    private LocalTime                    endTime;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "parentQuestion")
     private List<SongGameQuestionOption> answers;
@@ -41,13 +44,18 @@ public class SongGameQuestion {
     /**
      * Create a SongGameQuestion.
      *
-     * @param game    The parent game
-     * @param text    The question text
-     * @param answers List of all answers
+     * @param game      The parent game
+     * @param text      The question text
+     * @param startTime the start time for the question
+     * @param endTime   the end time for the question
+     * @param answers   List of all answers
      */
-    public SongGameQuestion(SongGame game, String text, List<SongGameQuestionOption> answers) {
+    public SongGameQuestion(SongGame game, String text, LocalTime startTime, LocalTime endTime,
+            List<SongGameQuestionOption> answers) {
         this.parentGame = game;
         this.questionText = text;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.answers = new ArrayList<>(answers);
         this.answers.forEach(a -> a.setParentQuestion(this));
     }
@@ -106,6 +114,34 @@ public class SongGameQuestion {
      */
     public void setAnswers(List<SongGameQuestionOption> answers) {
         this.answers = answers;
+    }
+
+    /**
+     * @return the startTime
+     */
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    /**
+     * @param startTime the startTime to set
+     */
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    /**
+     * @return the endTime
+     */
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    /**
+     * @param endTime the endTime to set
+     */
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
 }
