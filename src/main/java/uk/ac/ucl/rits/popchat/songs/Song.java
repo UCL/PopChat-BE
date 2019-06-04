@@ -5,118 +5,223 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
  * This represents a Song in the database.
+ *
  * <p>
  * Since it is hard to identify what should be unique for a song, we use
  * generated ids to tell them apart.
- * 
+ *
  * @author RSDG
  */
 @Entity
 public class Song {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long   id;
 
-	@NotNull
-	private String title;
-	@NotNull
-	private String artist;
-	@NotNull
-	private int year;
-	@NotNull
-	private String video;
+    @NotNull
+    @NotEmpty
+    private String title;
+    @NotNull
+    @NotEmpty
+    private String artist;
+    @NotNull
+    private int    year;
+    @NotNull
+    @NotEmpty
+    private String video;
 
-	@Column(columnDefinition = "TEXT", nullable = false)
-	private String lyrics;
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String lyrics;
 
-	/**
-	 * Create a new Song
-	 */
-	public Song() {
-	}
+    /**
+     * Create a new Song.
+     */
+    public Song() {}
 
-	public Song(String title, String artist, int year, String video) {
-		this(title, artist, year, video, null);
-	}
+    /**
+     * Create a new song.
+     *
+     * @param title  Song title
+     * @param artist Song artist
+     * @param year   Release year
+     * @param video  Youtube embed url
+     */
+    public Song(String title, String artist, int year, String video) {
+        this(title, artist, year, video, null);
+    }
 
-	public Song(String title, String artist, int year, String video, String lyrics) {
-		this.title = title;
-		this.artist = artist;
-		this.year = year;
-		this.video = video;
-		this.lyrics = lyrics;
-	}
+    /**
+     * Create a song.
+     *
+     * @param title  song title
+     * @param artist song artist
+     * @param year   song release year
+     * @param video  song video embed url
+     * @param lyrics song lyrics in LRC format
+     */
+    public Song(String title, String artist, int year, String video, String lyrics) {
+        this.title = title;
+        this.artist = artist;
+        this.year = year;
+        this.video = video;
+        this.lyrics = lyrics;
+    }
 
-	public Song(long id, String title, String artist, int year, String video, String lyrics) {
-		this(title, artist, year, video, lyrics);
-		this.id = id;
-	}
+    /**
+     * Create a new song.
+     *
+     * @param id     Song id
+     * @param title  Song title
+     * @param artist Song artist
+     * @param year   Song year
+     * @param video  embed url
+     * @param lyrics LRC lyrics
+     */
+    public Song(long id, String title, String artist, int year, String video, String lyrics) {
+        this(title, artist, year, video, lyrics);
+        this.id = id;
+    }
 
-	public Song(long id, String title, String artist, int year, String video) {
-		this(title, artist, year, video);
-		this.id = id;
-	}
+    /**
+     * Create a new song.
+     *
+     * @param id     song id
+     * @param title  song title
+     * @param artist artist
+     * @param year   year
+     * @param video  embed url
+     */
+    public Song(long id, String title, String artist, int year, String video) {
+        this(title, artist, year, video);
+        this.id = id;
+    }
 
-	public Song(Song s) {
-		this(s.id, s.title, s.artist, s.year, s.video, s.lyrics);
-	}
+    /**
+     * Copy constructor.
+     *
+     * @param s song
+     */
+    public Song(Song s) {
+        this(s.id, s.title, s.artist, s.year, s.video, s.lyrics);
+    }
 
-	public long getId() {
-		return id;
-	}
+    /**
+     * Get the id.
+     *
+     * @return the id
+     */
+    public long getId() {
+        return id;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    /**
+     * Set the id.
+     *
+     * @param id the id
+     */
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    /**
+     * Get title.
+     *
+     * @return song title
+     */
+    public String getTitle() {
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    /**
+     * Set the title.
+     *
+     * @param title new title
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public String getArtist() {
-		return artist;
-	}
+    /**
+     * Get the artist name.
+     *
+     * @return artist
+     */
+    public String getArtist() {
+        return artist;
+    }
 
-	public void setArtist(String artist) {
-		this.artist = artist;
-	}
+    /**
+     * Set the artist.
+     *
+     * @param artist new artist
+     */
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
 
-	public int getYear() {
-		return year;
-	}
+    /**
+     * Get release year.
+     *
+     * @return release year
+     */
+    public int getYear() {
+        return year;
+    }
 
-	public void setYear(int year) {
-		this.year = year;
-	}
+    /**
+     * Set the release year.
+     *
+     * @param year new release year
+     */
+    public void setYear(int year) {
+        this.year = year;
+    }
 
-	public String getVideo() {
-		return video;
-	}
+    /**
+     * Get the video.
+     *
+     * @return Video url
+     */
+    public String getVideo() {
+        return video;
+    }
 
-	public void setVideo(String video) {
-		this.video = video;
-	}
+    /**
+     * Set the embed url.
+     *
+     * @param video URL
+     */
+    public void setVideo(String video) {
+        this.video = video;
+    }
 
-	public String getLyrics() {
-		return lyrics;
-	}
+    /**
+     * Get lyrics.
+     *
+     * @return song lyrics
+     */
+    public String getLyrics() {
+        return lyrics;
+    }
 
-	public void setLyrics(String lyrics) {
-		this.lyrics = lyrics;
-	}
+    /**
+     * Set the lyrics.
+     *
+     * @param lyrics LRC lyrics
+     */
+    public void setLyrics(String lyrics) {
+        this.lyrics = lyrics;
+    }
 
-	@Override
-	public String toString() {
-		return String.format("%s: %s (%d)", this.title, this.artist, this.year);
-	}
+    @Override
+    public String toString() {
+        return String.format("%s: %s (%d)", this.title, this.artist, this.year);
+    }
 
 }

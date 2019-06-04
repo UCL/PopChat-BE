@@ -12,27 +12,27 @@ import uk.ac.ucl.rits.popchat.rhyming.Rhymes;
 
 /**
  * This class controls endpoints related to words and their relationships to
- * each other
- * 
+ * each other.
+ *
  * @author RSDG
  *
  */
 @RestController
 public class WordEndpoints {
 
-	private static final Logger log = LoggerFactory.getLogger(WordEndpoints.class);
+    private static final Logger log = LoggerFactory.getLogger(WordEndpoints.class);
 
-	/**
-	 * Find all the words in the dictionary that have a perfect rhyme with the given
-	 * word
-	 * 
-	 * @param word The word to rhyme with
-	 * @return All known words that rhyme with the given word (excluding itself)
-	 */
-	@GetMapping("words/rhymes-with/{word}")
-	public Set<String> rhymesWith(@PathVariable String word) {
-		log.trace(String.format("Finding rhymes for %s", word));
-		return Rhymes.getRhymes().rhymes(word.toLowerCase());
-	}
+    /**
+     * Find all the words in the dictionary that have a perfect rhyme with the given
+     * word.
+     *
+     * @param word The word to rhyme with
+     * @return All known words that rhyme with the given word (excluding itself)
+     */
+    @GetMapping("words/rhymes-with/{word}")
+    public Set<String> rhymesWith(@PathVariable final String word) {
+        log.trace(String.format("Finding rhymes for %s", word));
+        return Rhymes.getRhymes().rhymes(word.toLowerCase());
+    }
 
 }
