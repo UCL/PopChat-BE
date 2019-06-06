@@ -97,6 +97,45 @@ public class SongGame {
 
     }
 
+
+    /**
+     * Create a new game from a song with its words.
+     * This will cover the full song with a specified number of questions.
+     *
+     * @param song   The song
+     * @param lyrics The songs lyrics
+     * @param number Number of questions
+     */
+    public SongGame(Song song, Lyrics lyrics, int number) {
+        this.song = song;
+
+        this.songStartSeconds = lyrics.getStartTime().toSecondOfDay();
+        this.songEndSeconds = lyrics.getEndTime().toSecondOfDay();
+
+        Rhymes rhymes = Rhymes.getRhymes();
+        List<Lyrics> questionSequence = lyrics.split(number);
+
+        this.questions = new ArrayList<>();
+        for (Lyrics subFragment : questionSequence) {
+            Set<Set<String>> multiWords = rhymes.createRhymesWithGame(subFragment);
+            Pair<String, String> question = this.pickRandomPair(multiWords);
+            if (question == null) {
+                question = this.pickRandomQuestion(subFragment, rhymes, 10);
+                if (question == null) {
+                    continue;
+                }
+            }
+            Set<String> uniqueLyrics = new HashSet<>(subFragment.getWords());
+            uniqueLyrics.remove(question.getFirst());
+            uniqueLyrics.remove(question.getSecond());
+
+            this.questions.add(generateQuestion(question.getFirst(), question.getSecond(), subFragment.getStartTime(),
+                    subFragment.getEndTime(), new ArrayList<>(uniqueLyrics), rhymes));
+
+        }
+
+    }
+
     /**
      * Try generate a random question based on any given word.
      *

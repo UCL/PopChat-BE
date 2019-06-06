@@ -327,4 +327,46 @@ public class Lyrics {
         }
         return fragments;
     }
+
+
+    /**
+     * Fragment a set of Lyrics into a sequence set of size count.
+     *
+     * @param count Number of chunks to break the lyrics into (must be >=1)
+     * @return list of sequential lyrics
+     */
+    public List<Lyrics> split(int count) {
+        if (count < 1) {
+            throw new IllegalArgumentException("Count must be >= 1 but is " + count);
+        }
+        long songLines = this.lyrics.values().stream().filter(line -> !line.isEmpty()).count();
+
+        long base  = songLines / count;
+        long overflow = songLines % count;
+
+        List<Lyrics> fragments = new ArrayList<>();
+        Lyrics current = new Lyrics();
+        int lyricsInCurrent = 0;
+        for (Map.Entry<LocalTime, String> line : this.lyrics.entrySet()) {
+            final String lyric = line.getValue();
+            if (!lyric.isEmpty() && lyricsInCurrent > 0 && lyricsInCurrent % (overflow > 0 ? base + 1 : base) == 0) {
+                // The bland end line serves to tell us properly how long this section is.
+                current.addLine(line.getKey(), "");
+                fragments.add(current);
+                current = new Lyrics();
+                overflow--;
+                lyricsInCurrent = 0;
+            }
+            current.addLine(line.getKey(), lyric);
+            if (!lyric.isEmpty()) {
+                // Only interesting lines count
+                lyricsInCurrent++;
+            }
+        }
+        if (!current.isEmpty()) {
+            // the last current might not have been added. It also might be empty
+            fragments.add(current);
+        }
+        return fragments;
+    }
 }

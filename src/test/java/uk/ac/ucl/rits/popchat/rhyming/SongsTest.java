@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import uk.ac.ucl.rits.popchat.game.SongGame;
 import uk.ac.ucl.rits.popchat.songs.Lyrics;
 import uk.ac.ucl.rits.popchat.songs.Song;
 import uk.ac.ucl.rits.popchat.songs.SongRepository;
@@ -133,5 +134,26 @@ public class SongsTest {
 
             }
         }
+    }
+
+    /**
+     * Test to make sure that create game of fixed size returns the right number of
+     * questions.
+     */
+    @Test
+    public void testCreateFixedSizeTransientGame() {
+        List<Song> songs = songRepo.findByTitleIgnoreCase("Alexander Hamilton");
+
+        // There should only be one song called Hamilton
+        assert songs.size() == 1;
+        Song song = songs.get(0);
+
+        Lyrics lyrics = new Lyrics(song);
+
+        for (int i = 2; i < 15; i++) {
+            SongGame game = new SongGame(song, lyrics, i);
+            assertTrue(String.format("Failed for size %d", i), game.getQuestions().size() == i);
+        }
+
     }
 }
