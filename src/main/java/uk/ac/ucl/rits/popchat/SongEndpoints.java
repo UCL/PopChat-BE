@@ -82,7 +82,7 @@ public class SongEndpoints {
     public Game playGame(@PathVariable("songId") long songId, Principal principal) {
         Optional<Song> songSearch = songRepo.findById(songId);
         if (songSearch.isEmpty()) {
-            throw new IllegalArgumentException("So such song " + songId);
+            throw new IllegalArgumentException("No such song " + songId);
         }
         Song song = songSearch.get();
         Lyrics lyrics = new Lyrics(song);
@@ -94,6 +94,26 @@ public class SongEndpoints {
         }
         game.setUser(user);
         game = this.gameRepo.save(game);
+
+        return new Game(game);
+    }
+
+    /**
+     * Generate transient game for a given song with a specific number of question.
+     *
+     * @param songId    Song to generate the game for
+     * @param number    Number of questions to generate
+     * @return Game to generate
+     */
+    @GetMapping("/generate/{songId}")
+    public Game playGame(@PathVariable("songId") long songId, @RequestParam("num") int number) {
+        Optional<Song> songSearch = songRepo.findById(songId);
+        if (songSearch.isEmpty()) {
+            throw new IllegalArgumentException("No such song " + songId);
+        }
+        Song song = songSearch.get();
+        Lyrics lyrics = new Lyrics(song);
+        SongGame game = new SongGame(song, lyrics, number);
 
         return new Game(game);
     }
@@ -124,8 +144,8 @@ public class SongEndpoints {
     }
 
     /**
-     * Set the details for a song. Editing them if necessary.
-     * A song is being edited only if it has an ID.
+     * Set the details for a song. Editing them if necessary. A song is being edited
+     * only if it has an ID.
      *
      * @param song Song details to update
      * @return Outcomes of attempting to insert the song
