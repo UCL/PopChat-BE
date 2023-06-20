@@ -15,7 +15,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
 		<java.version>11</java.version>
-		<spring.security.oauth2.version>2.3.4.RELEASE</spring.security.oauth2.version>
+		<spring.security.oauth2.version>2.3.5.RELEASE</spring.security.oauth2.version>
 		<haikunator.version>2.0.1</haikunator.version>
 		<download.maven.plugin.version>1.4.1</download.maven.plugin.version>
 		<springfox.swagger2.version>2.9.2</springfox.swagger2.version>
